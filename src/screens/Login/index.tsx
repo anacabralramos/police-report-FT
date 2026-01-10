@@ -10,23 +10,26 @@ import {
   Image,
 } from "react-native";
 import { styles } from "./styles";
+import { useNavigation } from "@react-navigation/native";
 // import { supabase } from './supabase'; // Verifique se o caminho está correto
 
 const Login = () => {
+  const navigation = useNavigation();
   const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
   async function handleLogin() {
-    setLoading(true);
-    // Por enquanto, apenas um alerta para testar o clique
-    console.log("Tentando login com:", cpf);
+    navigation.navigate("Main");
 
-    // A lógica de autenticação com CPF exigirá um passo extra no Supabase depois
-    setTimeout(() => {
-      setLoading(false);
-      alert("Botão pressionado! Próximo passo: configurar o banco.");
-    }, 1500);
+    // setLoading(true);
+    // // Por enquanto, apenas um alerta para testar o clique
+    // console.log("Tentando login com:", cpf);
+
+    // // A lógica de autenticação com CPF exigirá um passo extra no Supabase depois
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   alert("Botão pressionado! Próximo passo: configurar o banco.");
+    // }, 1500);
   }
 
   return (
