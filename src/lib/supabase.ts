@@ -1,14 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const supabaseUrl = "SUA_URL_AQUI";
-const supabaseAnonKey = "SUA_CHAVE_ANON_AQUI";
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// if (!supabaseUrl || !supabaseAnonKey) {
+//   console.error("Erro: Variáveis de ambiente do Supabase não configuradas!");
+// } else {
+//   console.error("DEU BOM");
+// }
+
+export const supabase = createClient(supabaseUrl!, supabaseAnonKey!, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
-    // detectSessionInAppearanceEvent: true,
+    detectSessionInUrl: false,
   },
 });
