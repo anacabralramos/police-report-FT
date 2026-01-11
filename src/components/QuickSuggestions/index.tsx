@@ -1,14 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
-
-const TITULOS_PADRAO = [
-  "Tráfico",
-  "Porte Ilegal",
-  "Posse Ilegal",
-  "Roubo",
-  "Furto",
-  "Mandado de Prisão",
-];
+import { TITULOS_PADRAO } from "../../constants";
 
 // Componente de Sugestões Rápidas
 const QuickSuggestions = ({

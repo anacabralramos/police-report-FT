@@ -16,17 +16,8 @@ import * as ImagePicker from "expo-image-picker";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { DatePicker } from "../../components";
+import { DatePicker, PhotoUploader, TitleDropdown } from "../../components";
 import { styles } from "./styles"; // Use os estilos que definiremos abaixo
-
-// TODO: vincular quantas pessoas quiser
-// dados da pessoa:
-// nome
-// rg
-// cpf
-// endereço
-// data de nascimento
-// aparecer opçoes do local pra escolher com bairro, rua e numero
 
 export default function NewOccurrence() {
   const insets = useSafeAreaInsets();
@@ -105,34 +96,14 @@ export default function NewOccurrence() {
         <Text style={styles.headerTitle}>Novo cadastro</Text>
 
         {/* Seção de Fotos */}
-        <Text style={styles.label}>Evidências Fotográficas</Text>
-        <View style={styles.photoSection}>
-          <TouchableOpacity
-            style={styles.addPhotoButton}
-            onPress={handleAddPhoto}
-          >
-            <Ionicons name="camera" size={30} color="#fff" />
-            <Text style={styles.addPhotoText}>Adicionar</Text>
-          </TouchableOpacity>
+        <PhotoUploader
+          images={images}
+          removeImage={removeImage}
+          handleAddPhoto={handleAddPhoto}
+        />
 
-          <FlatList
-            horizontal
-            data={images}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <View style={styles.imageContainer}>
-                <Image source={{ uri: item }} style={styles.thumbnail} />
-                <TouchableOpacity
-                  style={styles.removeBadge}
-                  onPress={() => removeImage(item)}
-                >
-                  <Ionicons name="close-circle" size={20} color="#ff4444" />
-                </TouchableOpacity>
-              </View>
-            )}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+        {/* Campo de titulo */}
+        <TitleDropdown />
 
         {/* Campo Localização */}
         <Text style={styles.label}>Local da Abordagem</Text>
