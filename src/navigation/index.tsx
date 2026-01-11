@@ -1,18 +1,52 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Login from "../screens/Login";
-import TabNavigator from "./TabNavigator";
 
-const Stack = createNativeStackNavigator();
+import { OccurrenceDetailsScreen, PersonDetailsScreen } from "../screens";
+import { useAuthStore } from "../store/authStore";
+import { RootStackParamList } from "./types";
+import TabNavigator from "./TabNavigator";
+import Login from "../screens/Login";
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Routes() {
+  const user = useAuthStore((state) => state.user);
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* Primeira tela que aparece é o Login */}
-      <Stack.Screen name="Login" component={Login} />
+      {user ? (
+        // --- FLUXO AUTENTICADO (Só aparece se user != null) ---
+        <>
+          <Stack.Screen name="Main" component={TabNavigator} />
 
-      {/* Quando logar, navegamos para o "Main", que contém as Tabs */}
-      <Stack.Screen name="Main" component={TabNavigator} />
+          <Stack.Screen
+            name="OccurrenceDetails"
+            component={OccurrenceDetailsScreen}
+            options={{
+              headerShown: true,
+              title: "Detalhes",
+              headerStyle: { backgroundColor: "#101820" },
+              headerTintColor: "#fff",
+            }}
+          />
+
+          <Stack.Screen
+            name="PersonDetails"
+            component={PersonDetailsScreen}
+            options={{
+              headerShown: true,
+              title: "Perfil do Indivíduo",
+              headerStyle: { backgroundColor: "#101820" },
+              headerTintColor: "#fff",
+            }}
+          />
+        </>
+      ) : (
+        // --- FLUXO DE AUTENTICAÇÃO (Só aparece se user == null) ---
+        <Stack.Screen name="Login" component={Login} />
+      )}
     </Stack.Navigator>
   );
 }
+
+export * from "./types";

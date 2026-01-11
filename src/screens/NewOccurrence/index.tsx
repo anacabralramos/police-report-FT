@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -12,18 +13,28 @@ import {
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { styles } from "./styles"; // Use os estilos que definiremos abaixo
-import { DatePicker } from "../../components";
 
-// TODO: adicionar data da ocorrencia
+import { Ionicons } from "@expo/vector-icons";
+
+import { DatePicker } from "../../components";
+import { styles } from "./styles"; // Use os estilos que definiremos abaixo
+
+// TODO: vincular quantas pessoas quiser
+// dados da pessoa:
+// nome
+// rg
+// cpf
+// endereço
+// data de nascimento
+// aparecer opçoes do local pra escolher com bairro, rua e numero
+
 export default function NewOccurrence() {
   const insets = useSafeAreaInsets();
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [occurrenceDate, setOccurrenceDate] = useState(new Date());
+  const scrollRef = useRef<ScrollView>(null);
 
   // Função para selecionar fotos
   const pickImage = async () => {
@@ -77,18 +88,30 @@ export default function NewOccurrence() {
     setImages(images.filter((img) => img !== uri));
   };
 
+  const handleDateOpen = (yPosition: number) => {
+    // Aguarda o tempo da animação de abertura
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({
+        // Rolamos para a posição do componente + 50 pixels de folga
+        y: yPosition - 20,
+        animated: true,
+      });
+    }, 150);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1, backgroundColor: "#0A0F14" }}
     >
       <ScrollView
+        ref={scrollRef}
         contentContainerStyle={[
           styles.container,
           { paddingTop: insets.top + 20, paddingBottom: 40 },
         ]}
       >
-        <Text style={styles.headerTitle}>Nova Ocorrência</Text>
+        <Text style={styles.headerTitle}>Novo cadastro</Text>
 
         {/* Seção de Fotos */}
         <Text style={styles.label}>Evidências Fotográficas</Text>
@@ -151,9 +174,10 @@ export default function NewOccurrence() {
           onChangeText={setDescription}
         />
         <DatePicker
-          label="Data e Hora do Fato"
+          label="Data e Hora"
           date={occurrenceDate}
-          onChange={(newDate) => setOccurrenceDate(newDate)}
+          onChange={setOccurrenceDate}
+          onOpen={(y) => handleDateOpen(y)} // 4. Passa a função de rolar
         />
 
         {/* Botão de Envolvidos (Desabilitado por enquanto) */}

@@ -9,11 +9,16 @@ export function useOccurrences() {
         .from("ocorrencias")
         .select(
           `
-          *,
-          pessoas ( nome ) 
-        `
-        ) // Isso aqui já traz o nome do envolvido automaticamente!
-        .order("data_ocorrencia", { ascending: false });
+    *,
+    ocorrencia_envolvidos (
+      pessoa_id,
+      pessoas (
+        nome
+      )
+    )
+  `
+        )
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;

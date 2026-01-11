@@ -8,29 +8,26 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import { styles } from "./styles";
+
 import { useNavigation } from "@react-navigation/native";
-// import { supabase } from './supabase'; // Verifique se o caminho está correto
+
+import { useSignIn } from "../../hooks";
+import { styles } from "./styles";
 
 const Login = () => {
   const navigation = useNavigation();
-  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  async function handleLogin() {
-    navigation.navigate("Main");
 
-    // setLoading(true);
-    // // Por enquanto, apenas um alerta para testar o clique
-    // console.log("Tentando login com:", cpf);
+  // const [loading, setLoading] = useState(false);
 
-    // // A lógica de autenticação com CPF exigirá um passo extra no Supabase depois
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   alert("Botão pressionado! Próximo passo: configurar o banco.");
-    // }, 1500);
-  }
+  const { mutate: signIn, isPending } = useSignIn();
+
+  const handleLogin = async () => {
+    signIn({ email, password });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -46,13 +43,14 @@ const Login = () => {
         </View>
 
         <View style={styles.form}>
-          <Text style={styles.label}>CPF</Text>
+          <Text style={styles.label}>E-mail</Text>
           <TextInput
             style={styles.input}
-            placeholder="000.000.000-00"
-            keyboardType="numeric"
-            value={cpf}
-            onChangeText={setCpf}
+            placeholder="policial@email.com"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            placeholderTextColor="#334155"
           />
 
           <Text style={styles.label}>Senha</Text>
@@ -62,16 +60,19 @@ const Login = () => {
             secureTextEntry
             value={password}
             onChangeText={setPassword}
+            placeholderTextColor="#334155"
           />
 
           <TouchableOpacity
             style={styles.button}
             onPress={handleLogin}
-            disabled={loading}
+            disabled={isPending}
           >
-            <Text style={styles.buttonText}>
-              {loading ? "Acessando..." : "ENTRAR"}
-            </Text>
+            {isPending ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text>Entrar</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

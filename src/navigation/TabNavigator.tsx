@@ -1,7 +1,9 @@
 import React from "react";
+import { Platform } from "react-native";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, View, StyleSheet, Platform } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Ícones já vêm no Expo
+import { Ionicons } from "@expo/vector-icons";
+
 import {
   NewOccurrenceScreen,
   SearchOccurrenceScreen,
@@ -50,13 +52,3 @@ export default function HomeTabs() {
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#000",
-  },
-  text: { color: "#fff", fontSize: 18 },
-});

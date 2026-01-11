@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useDebounce } from "use-debounce";
 import {
   View,
   Text,
@@ -9,70 +11,23 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { styles } from "./styles"; // Reutilizando seu arquivo de estilos
-import { MOCK_PEOPLE } from "./mock";
-// import { supabase } from '../../supabase'; // Ajuste o caminho conforme sua estrutura
 
-interface Person {
-  id: string;
-  name: string;
-  cpf: string;
-  status?: string; // Ex: 'Procurado', 'Regular'
-}
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+
+import { usePeople } from "../../hooks";
+import { styles } from "./styles";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation";
 
 const SearchPerson = () => {
   const insets = useSafeAreaInsets();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [searchQuery, setSearchQuery] = useState("");
-  const [people, setPeople] = useState<Person[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
 
-  // Função para buscar pessoas no Supabase
-  // const handleSearch = async (text: string) => {
-  //   setSearchQuery(text);
-  //   if (text.length < 3) {
-  //     setPeople([]); // Só busca se tiver 3 ou mais caracteres para poupar banda
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   // TODO: remover mock
-  //   const data = MOCK_PEOPLE;
-  //   const error = null;
-  //   // const { data, error } = await supabase
-  //   //   .from('persons')
-  //   //   .select('*')
-  //   //   .ilike('name', `%${text}%`) // Busca insensível a maiúsculas/minúsculas
-  //   //   .limit(10);
-
-  //   if (!error && data) {
-  //     setPeople(data);
-  //   }
-  //   setLoading(false);
-  // };
-
-  const handleSearch = (text: string) => {
-    setSearchQuery(text);
-
-    if (text.trim() === "") {
-      setPeople([]); // Se apagar o texto, limpa a lista
-      return;
-    }
-
-    setLoading(true);
-
-    // Filtra o Mock em tempo real
-    // Importante: use o .toLowerCase() em ambos os lados para não diferenciar maiúsculas
-    const filtered = MOCK_PEOPLE.filter(
-      (person) =>
-        person.name.toLowerCase().includes(text.toLowerCase()) ||
-        person.cpf.includes(text)
-    );
-
-    setPeople(filtered);
-    setLoading(false);
-  };
+  const { data: peopleList, isLoading, refetch } = usePeople(debouncedSearch);
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
@@ -84,6 +39,11 @@ const SearchPerson = () => {
       </Text>
     </View>
   );
+
+  if (isLoading)
+    return (
+      <ActivityIndicator size="large" color="#101820" style={{ flex: 1 }} />
+    );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -106,29 +66,31 @@ const SearchPerson = () => {
               placeholder="Digite o nome completo..."
               placeholderTextColor="#666"
               value={searchQuery}
-              onChangeText={handleSearch}
+              onChangeText={setSearchQuery}
               autoCorrect={false}
             />
-            {loading && (
-              <ActivityIndicator color="#1d4ed8" style={{ marginRight: 10 }} />
-            )}
           </View>
-
-          {/* Lista de Pessoas */}
           <FlatList
-            data={people}
-            keyExtractor={(item) => item.id}
+            data={peopleList}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.personCard}>
+              <TouchableOpacity
+                style={styles.personCard}
+                onPress={() =>
+                  navigation.navigate("PersonDetails", { id: item.id })
+                }
+              >
                 <View style={styles.personInfo}>
-                  <Text style={styles.personName}>{item.name}</Text>
+                  <Text style={styles.personName}>{item.nome}</Text>
                   <Text style={styles.personCpf}>CPF: {item.cpf}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#334155" />
               </TouchableOpacity>
             )}
+            // Isso aqui permite "puxar para baixo" para atualizar a lista!
+            onRefresh={refetch}
+            refreshing={isLoading}
             ListEmptyComponent={renderEmptyComponent}
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
           />
         </View>
       </View>

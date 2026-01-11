@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,16 +16,31 @@ interface DatePickerProps {
   date: Date;
   onChange: (date: Date) => void;
   label: string;
+  onOpen?: () => void; // <--- Adicione isso
 }
 
-export default function DatePicker({ date, onChange, label }: DatePickerProps) {
+export default function DatePicker({
+  date,
+  onChange,
+  label,
+  onOpen,
+}: DatePickerProps) {
   const [show, setShow] = useState(false);
   // Guardamos uma data temporária para o iOS só aplicar ao clicar em "Confirmar"
   const [tempDate, setTempDate] = useState(date);
+  const viewRef = useRef<View>(null);
 
   const togglePicker = () => {
-    setTempDate(date); // Reseta a data temporária para a data atual do estado
-    setShow(!show);
+    const isOpening = !show;
+    setShow(isOpening);
+
+    if (isOpening && onOpen) {
+      // Medimos a posição da View em relação ao ScrollView pai
+      viewRef.current?.measure((x, y, width, height, pageX, pageY) => {
+        // Passamos a posição vertical (y) para a função onOpen
+        onOpen(y);
+      });
+    }
   };
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
@@ -55,7 +70,7 @@ export default function DatePicker({ date, onChange, label }: DatePickerProps) {
     .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} ref={viewRef}>
       <Text style={styles.label}>{label}</Text>
 
       <TouchableOpacity style={styles.pickerButton} onPress={togglePicker}>
