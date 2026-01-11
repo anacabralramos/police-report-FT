@@ -5,7 +5,6 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
   Image,
@@ -14,61 +13,31 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-import { DatePicker } from "../../components";
+import { DatePicker, FilterByTitle, FilterCarousel } from "../../components";
+import { formatDateToLocale } from "../../utils";
+import { OccurrenceFilter } from "../../types";
 import { useOccurrences } from "../../hooks";
 import { styles } from "./styles";
-import { formatDateToLocale } from "../../utils";
 
-// Mock de Ocorrências para teste
-// Mock de Ocorrências para teste
-// const MOCK_OCCURRENCES = [
-//   {
-//     id: "1",
-//     title: "Averiguação de Atitude Suspeita",
-//     date: new Date(),
-//     location: "Praça Central",
-//     person: "João Rodrigues",
-//     images: [
-//       "https://via.placeholder.com/60/FF5733/FFFFFF?text=F1", // Imagem de exemplo 1
-//       "https://via.placeholder.com/60/33FF57/FFFFFF?text=F2", // Imagem de exemplo 2
-//     ],
-//   },
-//   {
-//     id: "2",
-//     title: "Perturbação do Sossego",
-//     date: new Date(Date.now() - 86400000),
-//     location: "Rua das Flores, 12",
-//     person: "Maria Oliveira",
-//     images: ["https://via.placeholder.com/60/3366FF/FFFFFF?text=F3"],
-//   },
-//   {
-//     id: "3",
-//     title: "Tráfico de Entorpecentes",
-//     date: new Date(Date.now() - 172800000),
-//     location: "Bairro Industrial",
-//     person: "Carlos Eduardo",
-//     images: [], // Ocorrência sem fotos
-//   },
-// ];
 const SearchOccurrence = () => {
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
-  const { data: occurrences, isLoading } = useOccurrences();
 
+  const [filterOption, setFilterOption] = useState<OccurrenceFilter | null>(
+    null
+  );
   const [filterText, setFilterText] = useState("");
   const [filterDate, setFilterDate] = useState(new Date());
-  const [showDateFilter, setShowDateFilter] = useState(false);
-  // const [occurrences, setOccurrences] = useState(MOCK_OCCURRENCES);
 
-  // const handleFilter = (text: string) => {
-  //   setFilterText(text);
-  //   const filtered = MOCK_OCCURRENCES.filter(
-  //     (occ) =>
-  //       occ.title.toLowerCase().includes(text.toLowerCase()) ||
-  //       occ.person.toLowerCase().includes(text.toLowerCase())
-  //   );
-  //   setOccurrences(filtered);
-  // };
+  const {
+    data: occurrences,
+    isLoading,
+    isFetching,
+  } = useOccurrences({
+    option: filterOption,
+    text: filterText,
+    date: filterDate,
+  });
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -78,48 +47,31 @@ const SearchOccurrence = () => {
         <View style={[styles.container, { flex: 1 }]}>
           <Text style={styles.headerTitle}>Ocorrências</Text>
 
-          {/* Barra de Filtro de Texto */}
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="search"
-              size={20}
-              color="#1d4ed8"
-              style={styles.inputIcon}
+          <FilterCarousel
+            selectedFilter={filterOption}
+            onSelectFilter={setFilterOption}
+          />
+          {/* Renderização Condicional do Input baseada no Filtro */}
+          {filterOption === "TITLE" && (
+            <FilterByTitle
+              filterText={filterText}
+              setFilterText={setFilterText}
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Buscar por título ou envolvido..."
-              placeholderTextColor="#666"
-              value={filterText}
-              // onChangeText={handleFilter}
+          )}
+          {filterOption === "DATE" && (
+            <DatePicker
+              label="Selecione o dia"
+              date={filterDate || new Date()}
+              onChange={(d) => setFilterDate(d)}
+              mode="date" // <--- Aqui a mágica acontece
             />
-            <TouchableOpacity
-              onPress={() => setShowDateFilter(!showDateFilter)}
-            >
-              <Ionicons
-                name="calendar-outline"
-                size={24}
-                color={showDateFilter ? "#1d4ed8" : "#8e8e93"}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* Filtro de Data Expansível */}
-          {showDateFilter && (
-            <View style={{ marginBottom: 20 }}>
-              <DatePicker
-                label="Filtrar por data específica"
-                date={filterDate}
-                onChange={(d) => setFilterDate(d)}
-              />
-            </View>
           )}
 
           {/* Lista de Ocorrências */}
           <FlatList
             data={occurrences}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{ marginTop: 10, paddingBottom: 20 }}
             // ... dentro do componente SearchOccurrence, no FlatList renderItem ...
 
             renderItem={({ item }) => (

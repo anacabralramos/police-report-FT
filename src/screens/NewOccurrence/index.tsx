@@ -34,7 +34,6 @@ export default function NewOccurrence() {
   const [location, setLocation] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [occurrenceDate, setOccurrenceDate] = useState(new Date());
-  const scrollRef = useRef<ScrollView>(null);
 
   // Função para selecionar fotos
   const pickImage = async () => {
@@ -88,27 +87,19 @@ export default function NewOccurrence() {
     setImages(images.filter((img) => img !== uri));
   };
 
-  const handleDateOpen = (yPosition: number) => {
-    // Aguarda o tempo da animação de abertura
-    setTimeout(() => {
-      scrollRef.current?.scrollTo({
-        // Rolamos para a posição do componente + 50 pixels de folga
-        y: yPosition - 20,
-        animated: true,
-      });
-    }, 150);
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1, backgroundColor: "#0A0F14" }}
     >
       <ScrollView
-        ref={scrollRef}
         contentContainerStyle={[
           styles.container,
-          { paddingTop: insets.top + 20, paddingBottom: 40 },
+          {
+            // paddingTop: Platform.OS === "ios" ? 10 : insets.top + 20,
+            // { paddingTop: insets.top + 20, paddingBottom: 40 },
+            paddingBottom: 40,
+          },
         ]}
       >
         <Text style={styles.headerTitle}>Novo cadastro</Text>
@@ -177,7 +168,6 @@ export default function NewOccurrence() {
           label="Data e Hora"
           date={occurrenceDate}
           onChange={setOccurrenceDate}
-          onOpen={(y) => handleDateOpen(y)} // 4. Passa a função de rolar
         />
 
         {/* Botão de Envolvidos (Desabilitado por enquanto) */}

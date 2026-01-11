@@ -1,42 +1,114 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-  occurrenceCard: {
-    backgroundColor: "#1c252e",
-    borderRadius: 12,
-    flexDirection: "row", // Alinha imagem (esquerda) e texto (direita)
+  dateFilterContainer: {
+    marginTop: 5,
+  },
+  dateSelectorButton: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    backgroundColor: "#161B22",
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    height: 52,
     borderWidth: 1,
-    borderColor: "#334155",
-    overflow: "hidden",
-    height: 110, // Altura fixa para manter o padrão visual
+    borderColor: "#30363D",
+  },
+  dateSelectorText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    flex: 1,
+    marginLeft: 12,
+  },
+  ////////
+  container: {
+    paddingHorizontal: 20,
+    backgroundColor: "#0A0F14",
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  // Barra de Busca
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#161B22",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#30363D",
+    marginBottom: 10,
+  },
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  // Opções de Filtro (Data e Limpar)
+  filterOptions: {
+    backgroundColor: "#161B22",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#1d4ed8",
+  },
+  clearButton: {
+    marginTop: 12,
+    alignItems: "center",
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#30363D",
+  },
+  clearButtonText: {
+    color: "#ef4444",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  // Card da Ocorrência
+  occurrenceCard: {
+    flexDirection: "row",
+    backgroundColor: "#161B22",
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: "hidden", // Garante que a imagem respeite o border do card
+    borderWidth: 1,
+    borderColor: "#30363D",
+    alignItems: "center",
   },
   imageSide: {
-    width: 100, // Largura fixa da parte esquerda
-    height: "100%",
+    width: 100,
+    height: 110,
   },
   occurrenceCover: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover",
   },
   placeholderImage: {
-    backgroundColor: "#252f39",
+    backgroundColor: "#21262D",
     justifyContent: "center",
     alignItems: "center",
   },
   occurrenceInfo: {
-    flex: 1, // Ocupa todo o espaço restante do card
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    justifyContent: "space-between", // Distribui os itens verticalmente
-    height: "100%",
+    flex: 1,
+    padding: 12,
+    justifyContent: "space-between",
   },
   occurrenceHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 4,
   },
   occurrenceDate: {
     color: "#1d4ed8",
@@ -44,135 +116,42 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   occurrenceLocation: {
-    color: "#64748b",
-    fontSize: 11,
-    maxWidth: "60%", // Evita que o local bata na data
+    color: "#8e8e93",
+    fontSize: 12,
+    flex: 1,
+    textAlign: "right",
+    marginLeft: 10,
   },
   occurrenceTitle: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "bold",
-    marginVertical: 2,
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8,
+    lineHeight: 20,
   },
   involvedContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderTopWidth: 0.5,
-    borderTopColor: "#334155",
-    paddingTop: 5,
-  },
-  // --- Estrutura Global ---
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  label: {
-    color: "#8e8e93",
-    fontSize: 12,
-    fontWeight: "700",
-    marginBottom: 8,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-
-  // --- Inputs e Busca ---
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1c252e",
-    borderRadius: 10,
-    marginBottom: 20,
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: "#334155",
-    height: 55,
-  },
-  inputIcon: {
-    marginRight: 12,
-  },
-  input: {
-    flex: 1,
-    color: "#fff",
-    fontSize: 16,
-  },
-
-  // --- Cards (Pessoas e Ocorrências) ---
-  personCard: {
-    backgroundColor: "#1c252e",
-    padding: 16,
-    borderRadius: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#334155",
-    // Sombra leve para destacar no fundo preto
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  personInfo: {
-    flex: 1,
+    backgroundColor: "#0A0F14",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    alignSelf: "flex-start",
   },
   personName: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: "#C9D1D9",
+    fontSize: 12,
+    marginLeft: 6,
   },
-  personCpf: {
-    color: "#8e8e93",
-    fontSize: 14,
-    marginTop: 2,
-  },
-
-  // involvedContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   marginTop: 10,
-  //   paddingTop: 8,
-  //   borderTopWidth: 0.5,
-  //   borderTopColor: "#334155",
-  // },
-
-  // --- Estados Vazios ---
+  // Estados Vazios
   emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 60,
   },
   emptyText: {
-    color: "#64748b",
-    fontSize: 15,
-    textAlign: "center",
-    marginTop: 15,
-    paddingHorizontal: 50,
-    lineHeight: 22,
-  },
-
-  // --- Botões ---
-  buttonMain: {
-    backgroundColor: "#1d4ed8",
-    height: 55,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: "#8e8e93",
     fontSize: 16,
+    marginTop: 16,
   },
-  // Adicione ou atualize estes estilos no seu StyleSheet.create
 });

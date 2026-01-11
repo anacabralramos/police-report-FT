@@ -1,118 +1,99 @@
 import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { View, Text, TouchableOpacity, Platform } from "react-native";
+
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
+
 import { styles } from "./styles";
 
 interface DatePickerProps {
   date: Date;
   onChange: (date: Date) => void;
   label: string;
-  onOpen?: () => void; // <--- Adicione isso
+  mode?: "date" | "datetime";
 }
-
 export default function DatePicker({
   date,
   onChange,
   label,
-  onOpen,
+  mode = "date", // Mudei para date pois é o padrão da busca
 }: DatePickerProps) {
-  const [show, setShow] = useState(false);
-  // Guardamos uma data temporária para o iOS só aplicar ao clicar em "Confirmar"
   const [tempDate, setTempDate] = useState(date);
+  // Precisamos do show para o Android saber quando abrir/fechar
+  const [show, setShow] = useState(false);
   const viewRef = useRef<View>(null);
 
-  const togglePicker = () => {
-    const isOpening = !show;
-    setShow(isOpening);
-
-    if (isOpening && onOpen) {
-      // Medimos a posição da View em relação ao ScrollView pai
-      viewRef.current?.measure((x, y, width, height, pageX, pageY) => {
-        // Passamos a posição vertical (y) para a função onOpen
-        onOpen(y);
-      });
-    }
-  };
-
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (Platform.OS === "android") {
-      setShow(false);
-      if (event.type === "set" && selectedDate) {
-        onChange(selectedDate);
+    const now = new Date();
+
+    if (event.type === "dismissed") {
+      setShow(false); // Fecha se cancelar no Android
+      return;
+    }
+
+    if (selectedDate) {
+      const dataFinal = selectedDate > now ? now : selectedDate;
+
+      // No Android, precisamos fechar manualmente após o OK
+      if (Platform.OS === "android") {
+        setShow(false);
       }
-    } else {
-      // No iOS, apenas atualizamos o estado temporário enquanto o usuário desliza
-      if (selectedDate) setTempDate(selectedDate);
+
+      setTempDate(dataFinal);
+      onChange(dataFinal);
     }
   };
-
-  const handleConfirmIOS = () => {
-    onChange(tempDate);
-    setShow(false);
-  };
-
-  const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
-    date.getMonth() + 1
-  )
-    .toString()
-    .padStart(2, "0")}/${date.getFullYear()} ${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
   return (
     <View style={styles.container} ref={viewRef}>
       <Text style={styles.label}>{label}</Text>
 
-      <TouchableOpacity style={styles.pickerButton} onPress={togglePicker}>
+      {/* O TouchableOpacity volta a ser necessário para o Android disparar o abrir */}
+      <TouchableOpacity
+        style={styles.pickerButton}
+        onPress={() => setShow(true)}
+        disabled={Platform.OS === "ios"} // No iOS o botão nativo já lida com o toque
+      >
         <Ionicons
           name="calendar"
           size={20}
           color="#1d4ed8"
           style={styles.icon}
         />
-        <Text style={styles.dateText}>{formattedDate}</Text>
-      </TouchableOpacity>
 
-      {show && (
-        <View style={Platform.OS === "ios" ? styles.iosSheet : null}>
+        {Platform.OS === "ios" ? (
+          // NO IOS: Mantemos o componente exposto (seu visual atual)
           <DateTimePicker
-            value={tempDate}
-            mode="datetime"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
+            value={tempDate > new Date() ? new Date() : tempDate}
+            mode={mode}
+            display={"default"}
             onChange={onDateChange}
             textColor="#fff"
             locale="pt-BR"
+            maximumDate={new Date()}
+            accentColor="#1d4ed8"
+            themeVariant="dark"
           />
-
-          {Platform.OS === "ios" && (
-            <View style={styles.iosButtonContainer}>
-              <TouchableOpacity
-                onPress={() => setShow(false)}
-                style={[styles.iosButton, styles.cancelButton]}
-              >
-                <Text style={styles.cancelText}>Cancelar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleConfirmIOS}
-                style={[styles.iosButton, styles.confirmButton]}
-              >
-                <Text style={styles.confirmText}>Confirmar</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      )}
+        ) : (
+          // NO ANDROID: Exibimos apenas o texto, e o Picker só aparece quando 'show' for true
+          <>
+            <Text style={{ color: "#fff", fontSize: 16 }}>
+              {tempDate.toLocaleDateString("pt-BR")}
+            </Text>
+            {show && (
+              <DateTimePicker
+                value={tempDate > new Date() ? new Date() : tempDate}
+                mode={mode}
+                display="default"
+                onChange={onDateChange}
+                maximumDate={new Date()}
+              />
+            )}
+          </>
+        )}
+      </TouchableOpacity>
     </View>
   );
 }

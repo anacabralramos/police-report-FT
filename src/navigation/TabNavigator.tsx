@@ -9,10 +9,12 @@ import {
   SearchOccurrenceScreen,
   SearchPersonScreen,
 } from "..";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Tab = createBottomTabNavigator();
 
 export default function HomeTabs() {
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -32,7 +34,7 @@ export default function HomeTabs() {
         tabBarStyle: {
           backgroundColor: "#101820",
           borderTopColor: "#334155",
-          height: Platform.OS === "ios" ? 88 : 65, // Aumentamos a altura
+          height: Platform.OS === "ios" ? 88 : 70 + insets.bottom,
           paddingBottom: Platform.OS === "ios" ? 30 : 10, // Padding para iOS respeitar a barra
           paddingTop: 10,
         },

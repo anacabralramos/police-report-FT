@@ -21,17 +21,13 @@ export const styles = StyleSheet.create({
   icon: { marginRight: 10 },
   dateText: { color: "#fff", fontSize: 16 },
   iosSheet: {
-    backgroundColor: "#1c252e",
-    borderRadius: 12,
-    marginTop: 10,
-    padding: 10,
     borderWidth: 1,
+    borderRadius: 12,
     borderColor: "#334155",
   },
   iosButtonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
     gap: 10,
   },
   iosButton: {
