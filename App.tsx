@@ -31,7 +31,23 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <NavigationContainer>
+        <NavigationContainer
+          onStateChange={(state) => {
+            // Função para extrair nomes de rotas aninhadas (como as Tabs dentro da Main)
+            const getActiveRouteNames = (state: any): any => {
+              return state.routes.map((route: any) => {
+                if (route.state) {
+                  return { [route.name]: getActiveRouteNames(route.state) };
+                }
+                return route.name;
+              });
+            };
+
+            console.log("=== STACK ATUAL ===");
+            console.log(JSON.stringify(getActiveRouteNames(state), null, 2));
+            console.log("====================");
+          }}
+        >
           <StatusBar style="light" />
           <Routes />
         </NavigationContainer>

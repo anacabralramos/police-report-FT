@@ -154,4 +154,17 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 16,
   },
+  personCpf: {
+    fontSize: 12,
+    color: "#8e8e93", // Um cinza mais suave para não competir com o nome
+    // fontFamily: Platform.OS === "ios" ? "Courier" : "monospace", // Estilo mono para parecer documento
+    marginTop: 2,
+    marginLeft: 10,
+  },
+  // Aproveitando para garantir que o container da info esteja alinhado
+  personInfo: {
+    flex: 1,
+    justifyContent: "center",
+    marginLeft: 10,
+  },
 });

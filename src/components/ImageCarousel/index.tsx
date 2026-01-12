@@ -1,5 +1,6 @@
 import React from "react";
 import { FlatList, Image, View, StyleSheet, Dimensions } from "react-native";
+import { getImageUrl } from "../../hooks";
 
 const { width } = Dimensions.get("window");
 
@@ -15,7 +16,14 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <Image source={{ uri: item }} style={styles.image} />
+          <Image
+            source={{ uri: getImageUrl(item) }}
+            style={styles.image}
+            onLoadStart={() => console.log("Carregando foto...")}
+            onError={(e) =>
+              console.log("Erro ao carregar foto:", e.nativeEvent.error)
+            }
+          />
         )}
       />
     </View>

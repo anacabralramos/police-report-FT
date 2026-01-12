@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { DatePicker, FilterByTitle, FilterCarousel } from "../../components";
 import { formatDateToLocale } from "../../utils";
 import { OccurrenceFilter } from "../../types";
-import { useOccurrences } from "../../hooks";
+import { getImageUrl, useOccurrences } from "../../hooks";
 import { styles } from "./styles";
 
 const SearchOccurrence = () => {
@@ -85,8 +85,15 @@ const SearchOccurrence = () => {
                 <View style={styles.imageSide}>
                   {item.fotos && item.fotos.length > 0 ? (
                     <Image
-                      source={{ uri: item.fotos[0] }}
+                      source={{ uri: getImageUrl(item.fotos[0]) }}
                       style={styles.occurrenceCover}
+                      onLoadStart={() => console.log("Carregando foto...")}
+                      onError={(e) =>
+                        console.log(
+                          "Erro ao carregar foto:",
+                          e.nativeEvent.error
+                        )
+                      }
                     />
                   ) : (
                     <View
@@ -117,18 +124,19 @@ const SearchOccurrence = () => {
                   </Text>
 
                   {item.ocorrencia_envolvidos &&
-                    item.ocorrencia_envolvidos.length > 0 && (
-                      <View style={styles.involvedContainer}>
+                    item.ocorrencia_envolvidos.length > 0 &&
+                    item.ocorrencia_envolvidos.map((person, index) => (
+                      <View style={styles.involvedContainer} key={index}>
                         <Ionicons
                           name="person-circle-outline"
                           size={16}
                           color="#8e8e93"
                         />
                         <Text style={styles.personCpf} numberOfLines={1}>
-                          {item.ocorrencia_envolvidos}
+                          {person.pessoas.nome}
                         </Text>
                       </View>
-                    )}
+                    ))}
                 </View>
 
                 {/* Indicador de navegação */}

@@ -1,7 +1,11 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { OccurrenceDetailsScreen, PersonDetailsScreen } from "../screens";
+import {
+  LinkThoseInvolvedScreen,
+  OccurrenceDetailsScreen,
+  PersonDetailsScreen,
+} from "../screens";
 import { useAuthStore } from "../store/authStore";
 import { RootStackParamList } from "./types";
 import TabNavigator from "./TabNavigator";
@@ -36,6 +40,16 @@ export default function Routes() {
             options={{
               headerShown: true,
               title: "Perfil do Indivíduo",
+              headerStyle: { backgroundColor: "#101820" },
+              headerTintColor: "#fff",
+            }}
+          />
+          <Stack.Screen
+            name="LinkThoseInvolved"
+            component={LinkThoseInvolvedScreen}
+            options={{
+              headerShown: true,
+              title: "Vincular indivíduos",
               headerStyle: { backgroundColor: "#101820" },
               headerTintColor: "#fff",
             }}

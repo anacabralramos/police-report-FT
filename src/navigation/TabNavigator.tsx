@@ -10,8 +10,9 @@ import {
   SearchPersonScreen,
 } from "..";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TabParamList } from "./types";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function HomeTabs() {
   const insets = useSafeAreaInsets();

@@ -3,3 +3,6 @@ export * from "./usePeople";
 export * from "./usePersonDetails";
 export * from "./useOccurrences";
 export * from "./useOccurrenceDetails";
+export * from "./useCreatePerson";
+export * from "./useCreateOccurrence";
+export * from "./utils";

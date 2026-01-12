@@ -4,55 +4,39 @@ import {
   Text,
   View,
   TextInput,
-  Keyboard,
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { TITULOS_PADRAO } from "../../constants";
+import { OccurrenceForm } from "../../types";
 import { styles } from "./styles";
 
 interface TitleDropdownProps {
-  // selectedFilter: OccurrenceFilter | null;
-  // onSelectFilter: (filter: OccurrenceFilter | null) => void;
+  title: string;
+  updateForm: (field: keyof OccurrenceForm, value: any) => void;
 }
 
-const TitleDropdown = ({}: // selectedFilter,
-// onSelectFilter,
-
-TitleDropdownProps) => {
-  // 1. Adicione estes estados novos
-  const [title, setTitle] = useState("");
+const TitleDropdown = ({ updateForm, title }: TitleDropdownProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // 2. Filtre as sugestões conforme o usuário digita
-  const filteredSuggestions = ["Outro", ...TITULOS_PADRAO].filter((item) =>
-    item.toLowerCase().includes(title.toLowerCase())
-  );
-
-  // const [title, setTitle] = useState("");
-  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isManualInput, setIsManualInput] = useState(false); // Controla se liberamos a escrita
+  const [isManualInput, setIsManualInput] = useState(false);
 
   const handleSelect = (item: string) => {
     if (item === "Outros") {
       setIsManualInput(true);
-      setTitle(""); // Limpa para ele escrever o novo
+      updateForm("titulo", "");
     } else {
-      setTitle(item);
-      // onTitleChange(item);
+      updateForm("titulo", item);
       setIsManualInput(false);
     }
     setIsDropdownOpen(false);
   };
 
-  // ... dentro do return ...
   return (
     <View style={styles.dropdownWrapper}>
       <Text style={styles.label}>Título da Ocorrência</Text>
 
-      {/* Overlay para fechar ao tocar fora */}
       {isDropdownOpen && (
         <TouchableWithoutFeedback onPress={() => setIsDropdownOpen(false)}>
           <View style={styles.fullScreenOverlay} />
@@ -76,8 +60,7 @@ TitleDropdownProps) => {
             autoFocus
             value={title}
             onChangeText={(text) => {
-              setTitle(text);
-              // onTitleChange(text);
+              updateForm("titulo", text);
             }}
           />
         ) : (
@@ -96,7 +79,7 @@ TitleDropdownProps) => {
         {(title.length > 0 || isManualInput) && (
           <TouchableOpacity
             onPress={() => {
-              setTitle("");
+              updateForm("titulo", "");
               setIsManualInput(false);
               setIsDropdownOpen(false);
             }}
