@@ -19,6 +19,7 @@ const OccurrenceDetails = () => {
   const { params } = useRoute<PersonDetailsRouteProp>();
   const { data: occurrence, isLoading } = useOccurrenceDetails(params.id);
 
+  const namesArray = occurrence.envolvidos_nomes?.split(" | ") || [];
   return (
     <ScrollView style={styles.mainContainer}>
       {/* 1. Carrossel de Imagens */}
@@ -52,20 +53,17 @@ const OccurrenceDetails = () => {
         </View>
 
         {/* 5. Envolvidos */}
-        {occurrence?.ocorrencia_envolvidos &&
-          occurrence?.ocorrencia_envolvidos.length && (
-            <View style={styles.infoCard}>
-              <Text style={styles.label}>Envolvidos</Text>
-              {occurrence.ocorrencia_envolvidos.map((person, index) => (
-                <View key={index} style={styles.personTag}>
-                  <Ionicons name="person-outline" size={16} color="#1d4ed8" />
-                  <Text style={styles.personTagText}>
-                    {person.pessoas.nome}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
+        {namesArray.length && (
+          <View style={styles.infoCard}>
+            <Text style={styles.label}>Envolvidos</Text>
+            {namesArray.map((person, index) => (
+              <View key={index} style={styles.personTag}>
+                <Ionicons name="person-outline" size={16} color="#1d4ed8" />
+                <Text style={styles.personTagText}>{person}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
     </ScrollView>
   );

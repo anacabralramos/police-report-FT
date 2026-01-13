@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  ScrollView,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  View,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { ScrollView, TouchableOpacity, Text, View } from "react-native";
 
+import { Ionicons } from "@expo/vector-icons";
 import { OccurrenceFilter } from "@types";
+
 import { filters } from "./contants";
 import { styles } from "./styles";
 

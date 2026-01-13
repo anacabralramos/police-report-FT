@@ -10,14 +10,13 @@ export interface OccurrenceForm {
 }
 
 export interface OccurrenceDetails {
-  id: string;
+  created_at: string;
+  data_hora: string;
+  descricao: string;
+  envolvidos_cpfs: string;
+  envolvidos_nomes: string;
   fotos: string[];
-  data_hora: Date;
+  id: string;
   localizacao: string;
   titulo: string;
-  ocorrencia_envolvidos: {
-    pessoas: {
-      nome: string;
-    };
-  }[];
 }

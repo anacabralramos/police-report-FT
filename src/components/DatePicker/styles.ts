@@ -19,25 +19,8 @@ export const styles = StyleSheet.create({
     borderColor: "#334155",
   },
   icon: { marginRight: 10 },
-  dateText: { color: "#fff", fontSize: 16 },
-  iosSheet: {
-    borderWidth: 1,
-    borderRadius: 12,
-    borderColor: "#334155",
+  text: {
+    color: "#fff",
+    fontSize: 16,
   },
-  iosButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 10,
-  },
-  iosButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  confirmButton: { backgroundColor: "#1d4ed8" },
-  cancelButton: { backgroundColor: "#334155" },
-  confirmText: { color: "#fff", fontWeight: "bold" },
-  cancelText: { color: "#8e8e93", fontWeight: "bold" },
 });

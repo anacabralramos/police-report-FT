@@ -15,7 +15,6 @@ const { width } = Dimensions.get("window");
 export default function ImageCarousel({ images }: { images: string[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Função para calcular qual imagem está no centro da tela
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
@@ -32,7 +31,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
-        scrollEventThrottle={16} // Garante uma atualização suave (aprox. 60fps)
+        scrollEventThrottle={16}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
           <Image source={{ uri: getImageUrl(item) }} style={styles.image} />

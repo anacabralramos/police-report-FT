@@ -1,120 +1,64 @@
 import { useQuery } from "@tanstack/react-query";
+import { OccurrenceFilter } from "@types";
 
-import { OccurrenceFilter } from "../types";
 import { supabase } from "../lib";
 
-// export function useOccurrences() {
-//   return useQuery({
-//     queryKey: ["occurrences"],
-//     queryFn: async () => {
-//       const { data, error } = await supabase
-//         .from("ocorrencias")
-//         .select(
-//           `
-//     *,
-//     ocorrencia_envolvidos (
-//       pessoa_id,
-//       pessoas (
-//         nome
-//       )
-//     )
-//   `
-//         )
-//         .order("created_at", { ascending: false });
-
-//       if (error) throw error;
-//       return data;
-//     },
-//   });
-// }
-export function useOccurrences(filters: {
+interface UseOccurrencesProps {
   option: OccurrenceFilter | null;
   text: string;
   date: Date;
-}) {
-  return useQuery({
-    queryKey: ["occurrences", filters],
-    queryFn: async () => {
-      // 1. Iniciamos a query base
-      let query = supabase.from("ocorrencias").select(`
-          *,
-          ocorrencia_envolvidos (
-            pessoa_id,
-            pessoas ( nome )
-          )
-        `);
+}
 
-      // 2. Aplicamos filtros condicionais baseados na escolha do usuário
-      if (filters.option === "TITLE" && filters.text) {
-        // Busca parcial insensível a maiúsculas/minúsculas
-        query = query.ilike("titulo", `%${filters.text}%`);
+export function useOccurrences({ option, text, date }: UseOccurrencesProps) {
+  return useQuery({
+    queryKey: ["occurrences", option, text, date],
+    queryFn: async () => {
+      // 1. Apontamos para a nossa nova VIEW
+      let query = supabase.from("ocorrencias_com_envolvidos").select("*");
+
+      console.log({ option, date });
+      // 2. Filtro por TÍTULO (na própria ocorrência)
+      if (option === "TITLE" && text) {
+        query = query.ilike("titulo", `%${text}%`);
       }
 
-      if (filters.option === "DATE") {
-        const start = new Date(filters.date);
+      // 3. Filtro por DATA
+      if (option === "DATE" && date) {
+        const start = new Date(date);
         start.setHours(0, 0, 0, 0);
-        const end = new Date(filters.date);
+        const end = new Date(date);
         end.setHours(23, 59, 59, 999);
-
         query = query
           .gte("data_hora", start.toISOString())
           .lte("data_hora", end.toISOString());
       }
 
-      // Adicionando o novo filtro de Localização que você mencionou
-      if (filters.option === "LOCATION" && filters.text) {
-        query = query.ilike("localizacao", `%${filters.text}%`);
+      // 4. Filtro por ENVOLVIDO (usando as colunas agregadas da View)
+      if (option === "INVOLVED" && text) {
+        const cleanText = text.replace(/\D/g, "");
+        const isNumeric = cleanText.length > 0 && /^\d+$/.test(cleanText);
+
+        if (isNumeric) {
+          // Busca o CPF dentro da string de CPFs agregados (ex: "123... | 456...")
+          query = query.ilike("envolvidos_cpfs", `%${cleanText}%`);
+        } else {
+          // Busca o nome dentro da string de nomes agregados
+          query = query.ilike("envolvidos_nomes", `%${text}%`);
+        }
       }
 
-      // 3. Executamos com a ordenação final
-      const { data, error } = await query.order("created_at", {
-        ascending: false,
-      });
+      // 5. Ordenação e Limite
+      const { data, error } = await query
+        // .order("created_at", { ascending: false })
+        .order("data_hora", { ascending: false })
+        .limit(50);
 
       if (error) throw error;
       return data;
     },
-    // Mantém a lista atual visível enquanto busca a nova (UX fluida)
+    // Mantém a lista anterior enquanto carrega a nova busca (UX fluida)
     placeholderData: (previousData) => previousData,
-    // Evita que o app refaça a busca se o policial apenas minimizar o app por 10 segundos
-    staleTime: 1000 * 60 * 5,
+    // Evita refetch desnecessário se o policial voltar na tela rápido
+    staleTime: 1000 * 60 * 2,
   });
 }
-// src/hooks/useOccurrences.ts
-// export function useOccurrences(searchTerm: string, dateFilter: Date | null) {
-//   return useQuery({
-//     queryKey: ["occurrences", searchTerm, dateFilter?.toISOString()],
-//     queryFn: async () => {
-//       let query = supabase.from("ocorrencias").select(`
-//           *,
-//           ocorrencia_envolvidos (
-//             pessoas ( nome )
-//           )
-//         `);
-
-//       // 1. Filtro de Texto (Título ou Localização)
-//       if (searchTerm) {
-//         query = query.or(
-//           `titulo.ilike.%${searchTerm}%,localizacao.ilike.%${searchTerm}%`
-//         );
-//         // Nota: Filtrar pelo nome do envolvido no select complexo
-//         // requer rpc ou filtros avançados. Por hora, focamos em titulo/local.
-//       }
-
-//       // 2. Filtro de Data
-//       if (dateFilter) {
-//         const startOfDay = new Date(dateFilter).setHours(0, 0, 0, 0);
-//         const endOfDay = new Date(dateFilter).setHours(23, 59, 59, 999);
-//         query = query
-//           .gte("data_hora", new Date(startOfDay).toISOString())
-//           .lte("data_hora", new Date(endOfDay).toISOString());
-//       }
-
-//       const { data, error } = await query.order("created_at", {
-//         ascending: false,
-//       });
-//       if (error) throw error;
-//       return data;
-//     },
-//   });
-// }

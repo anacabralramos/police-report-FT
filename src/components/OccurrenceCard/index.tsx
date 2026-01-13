@@ -16,6 +16,8 @@ interface OccurrenceCardProps {
 const OccurrenceCard = ({ occurrence }: OccurrenceCardProps) => {
   const navigation = useAppNavigation();
 
+  const namesArray = occurrence.envolvidos_nomes?.split(" | ") || [];
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -30,8 +32,9 @@ const OccurrenceCard = ({ occurrence }: OccurrenceCardProps) => {
             source={{ uri: getImageUrl(occurrence.fotos[0]) }}
             style={styles.image}
             onLoadStart={() => console.log("Carregando foto...")}
-            onError={(e) =>
-              console.log("Erro ao carregar foto:", e.nativeEvent.error)
+            onError={
+              (e) => console.log("Erro ao carregar foto:")
+              // console.log("Erro ao carregar foto:", e.nativeEvent.error)
             }
           />
         ) : (
@@ -56,9 +59,8 @@ const OccurrenceCard = ({ occurrence }: OccurrenceCardProps) => {
           {occurrence.titulo}
         </Text>
 
-        {occurrence.ocorrencia_envolvidos &&
-          occurrence.ocorrencia_envolvidos.length > 0 &&
-          occurrence.ocorrencia_envolvidos.map((person, index) => (
+        {namesArray.length > 0 &&
+          namesArray.map((person, index) => (
             <View style={styles.involvedContainer} key={index}>
               <Ionicons
                 name="person-circle-outline"
@@ -66,7 +68,7 @@ const OccurrenceCard = ({ occurrence }: OccurrenceCardProps) => {
                 color="#8e8e93"
               />
               <Text style={styles.personCpf} numberOfLines={1}>
-                {person.pessoas.nome}
+                {person}
               </Text>
             </View>
           ))}

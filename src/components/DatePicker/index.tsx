@@ -18,18 +18,17 @@ export default function DatePicker({
   date,
   onChange,
   label,
-  mode = "date", // Mudei para date pois é o padrão da busca
+  mode = "date",
 }: DatePickerProps) {
-  const [tempDate, setTempDate] = useState(date);
-  // Precisamos do show para o Android saber quando abrir/fechar
-  const [show, setShow] = useState(false);
   const viewRef = useRef<View>(null);
+  const [tempDate, setTempDate] = useState(date);
+  const [show, setShow] = useState(false);
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const now = new Date();
 
     if (event.type === "dismissed") {
-      setShow(false); // Fecha se cancelar no Android
+      setShow(false);
       return;
     }
 
@@ -50,7 +49,7 @@ export default function DatePicker({
     <View style={styles.container} ref={viewRef}>
       <Text style={styles.label}>{label}</Text>
 
-      {/* O TouchableOpacity volta a ser necessário para o Android disparar o abrir */}
+      {/* O TouchableOpacity é necessário para o Android disparar o abrir */}
       <TouchableOpacity
         style={styles.pickerButton}
         onPress={() => setShow(true)}
@@ -79,7 +78,7 @@ export default function DatePicker({
         ) : (
           // NO ANDROID: Exibimos apenas o texto, e o Picker só aparece quando 'show' for true
           <>
-            <Text style={{ color: "#fff", fontSize: 16 }}>
+            <Text style={styles.text}>
               {tempDate.toLocaleDateString("pt-BR")}
             </Text>
             {show && (

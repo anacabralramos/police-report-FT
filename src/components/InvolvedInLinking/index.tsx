@@ -1,8 +1,9 @@
 import React from "react";
 import { TouchableOpacity, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
+import { Ionicons } from "@expo/vector-icons";
 import { SelectedPerson } from "@types";
+
 import { styles } from "./styles";
 
 interface InvolvedInLinkingProps {
@@ -29,7 +30,7 @@ const InvolvedInLinking = ({ involved, onDelete }: InvolvedInLinkingProps) => {
 
           <TouchableOpacity
             onPress={() => onDelete(person.id)}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            hitSlop={styles.hitStop}
           >
             <Ionicons name="close-circle" size={20} color="#ff4444" />
           </TouchableOpacity>

@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     marginVertical: 10,
   },
   scrollContent: {
-    gap: 10, // Espaçamento entre os chips
+    gap: 10,
   },
   chip: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
@@ -16,12 +16,12 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#1e293b", // Um cinza azulado escuro
+    backgroundColor: "#1e293b",
     padding: 12,
     borderRadius: 8,
     marginBottom: 6,
     borderLeftWidth: 4,
-    borderLeftColor: "#1d4ed8", // Azul de destaque
+    borderLeftColor: "#1d4ed8",
   },
   info: {
     flexDirection: "row",
@@ -32,5 +32,11 @@ export const styles = StyleSheet.create({
     color: "#fff",
     marginLeft: 10,
     fontSize: 15,
+  },
+  hitStop: {
+    top: 10,
+    bottom: 10,
+    left: 10,
+    right: 10,
   },
 });

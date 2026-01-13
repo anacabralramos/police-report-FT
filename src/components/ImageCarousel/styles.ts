@@ -5,7 +5,6 @@ const { width } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   container: { height: 250, backgroundColor: "#1c252e", position: "relative" },
   image: { width: width, height: 250, resizeMode: "cover" },
-
   paginationContainer: {
     position: "absolute",
     bottom: 15,

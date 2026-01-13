@@ -6,6 +6,7 @@ import { OccurrenceFilter } from "@types";
 import { useOccurrences } from "@hooks";
 import {
   DatePicker,
+  FilterByInvolved,
   FilterByTitle,
   FilterCarousel,
   OccurrenceCard,
@@ -21,21 +22,26 @@ const SearchOccurrence = () => {
   const [filterText, setFilterText] = useState("");
   const [filterDate, setFilterDate] = useState(new Date());
 
-  const {
-    data: occurrences,
-    isLoading,
-    isFetching,
-  } = useOccurrences({
+  const { data: occurrences } = useOccurrences({
     option: filterOption,
     text: filterText,
     date: filterDate,
   });
 
+  const handleChangeFilter = (filter: OccurrenceFilter | null) => {
+    setFilterOption(filter);
+    if (filter === "DATE") {
+      setFilterDate(new Date());
+    } else {
+      setFilterText("");
+    }
+  };
+
   return (
     <Wrapper title="Ocorrências">
       <FilterCarousel
         selectedFilter={filterOption}
-        onSelectFilter={setFilterOption}
+        onSelectFilter={handleChangeFilter}
       />
       {/* Renderização Condicional do Input baseada no Filtro */}
       {filterOption === "TITLE" && (
@@ -46,7 +52,13 @@ const SearchOccurrence = () => {
           label="Selecione o dia"
           date={filterDate || new Date()}
           onChange={(d) => setFilterDate(d)}
-          mode="date" // <--- Aqui a mágica acontece
+          mode="date"
+        />
+      )}
+      {filterOption === "INVOLVED" && (
+        <FilterByInvolved
+          filterText={filterText}
+          setFilterText={setFilterText}
         />
       )}
 

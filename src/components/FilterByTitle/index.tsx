@@ -36,7 +36,6 @@ const FilterByTitle = ({ filterText, setFilterText }: FilterByTitleProps) => {
         )}
       </View>
 
-      {/* Exibe as sugestões apenas se o filtro for Título */}
       <QuickSuggestions onSelect={(val) => setFilterText(val)} />
     </View>
   );
