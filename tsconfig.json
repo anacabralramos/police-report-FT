@@ -10,7 +10,8 @@
       "@utils": ["utils/index"],
       "@navigation": ["navigation/index"],
       "@hooks": ["hooks/index"],
-      "@store": ["store/index"]
+      "@store": ["store/index"],
+      "@constants": ["constants/index"]
     }
   }
 }

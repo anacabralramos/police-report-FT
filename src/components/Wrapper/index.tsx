@@ -18,7 +18,7 @@ const Wrapper = ({ children, title, useScroll = false }: WrapperProps) => {
   const Container = useScroll ? ScrollView : View;
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container style={styles.wrapper}>
+      <Container style={[styles.wrapper]}>
         <Text style={styles.title}>{title}</Text>
         {children}
       </Container>

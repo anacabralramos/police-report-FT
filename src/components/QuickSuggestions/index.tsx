@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
-import { TITULOS_PADRAO } from "../../constants";
+import { TITULOS_PADRAO } from "@constants";
 
 // Componente de Sugestões Rápidas
 const QuickSuggestions = ({

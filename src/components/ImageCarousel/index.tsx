@@ -1,10 +1,27 @@
-import React from "react";
-import { FlatList, Image, View, StyleSheet, Dimensions } from "react-native";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  View,
+  Dimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
 import { getImageUrl } from "@hooks";
+import { styles } from "./styles";
 
 const { width } = Dimensions.get("window");
 
 export default function ImageCarousel({ images }: { images: string[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Função para calcular qual imagem está no centro da tela
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.round(scrollPosition / width);
+    setActiveIndex(index);
+  };
+
   if (!images || images.length === 0) return null;
 
   return (
@@ -14,23 +31,26 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item, index) => index.toString()}
+        onScroll={handleScroll}
+        scrollEventThrottle={16} // Garante uma atualização suave (aprox. 60fps)
+        keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
-          <Image
-            source={{ uri: getImageUrl(item) }}
-            style={styles.image}
-            onLoadStart={() => console.log("Carregando foto...")}
-            onError={(e) =>
-              console.log("Erro ao carregar foto:", e.nativeEvent.error)
-            }
-          />
+          <Image source={{ uri: getImageUrl(item) }} style={styles.image} />
         )}
       />
+
+      {/* Container das Bolinhas (Pagination) */}
+      <View style={styles.paginationContainer}>
+        {images.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.dot,
+              activeIndex === index ? styles.activeDot : styles.inactiveDot,
+            ]}
+          />
+        ))}
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { height: 250, backgroundColor: "#1c252e" },
-  image: { width: width, height: 250, resizeMode: "cover" },
-});

@@ -1,11 +1,10 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: "#0A0F14",
-    paddingHorizontal: 20,
-    paddingVertical: 40,
+    padding: 20,
   },
   title: {
     fontSize: 24,

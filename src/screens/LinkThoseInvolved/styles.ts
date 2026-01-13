@@ -1,7 +1,17 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  // Adicione ao seu arquivo de estilos:
+  wrapper: {
+    flex: 1,
+    backgroundColor: "#0A0F14",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 25,
+  },
   searchSection: { zIndex: 10, marginBottom: 15 },
   searchResultsList: {
     backgroundColor: "#161B22",
@@ -29,36 +39,14 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#1d4ed8",
+    alignSelf: "flex-start",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    marginRight: 10,
-    height: 35,
   },
   chipText: { color: "#fff", fontWeight: "500" },
 
   divider: { height: 1, backgroundColor: "#30363D", marginVertical: 20 },
-
-  formInput: {
-    backgroundColor: "#161B22",
-    borderRadius: 10,
-    padding: 12,
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#30363D",
-  },
-  addAndSelectButton: {
-    flexDirection: "row",
-    backgroundColor: "#059669", // Verde para indicar criação
-    padding: 15,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-    gap: 10,
-  },
   confirmButton: {
     backgroundColor: "#1d4ed8",
     padding: 18,
@@ -67,19 +55,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   confirmButtonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
-  // Adicione estes estilos ao seu StyleSheet.create
 
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    backgroundColor: "#0A0F14", // Fundo escuro padrão do app
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 20,
-  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -98,11 +74,6 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     height: "100%",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   ghostButton: {
     flexDirection: "row",

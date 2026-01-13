@@ -36,7 +36,6 @@ export default function HomeTabs() {
           backgroundColor: "#101820",
           borderTopColor: "#334155",
           height: Platform.OS === "ios" ? 88 : 70 + insets.bottom,
-          paddingBottom: Platform.OS === "ios" ? 30 : 10, // Padding para iOS respeitar a barra
           paddingTop: 10,
         },
         tabBarLabelStyle: {

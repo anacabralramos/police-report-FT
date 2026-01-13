@@ -25,11 +25,9 @@ const SearchPerson = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="search-outline" size={80} color="#334155" />
+      <Ionicons name="people-outline" size={80} color="#334155" />
       <Text style={styles.emptyText}>
-        {searchQuery.length < 3
-          ? "Digite pelo menos 3 letras para buscar"
-          : "Nenhuma pessoa encontrada com este nome."}
+        {isLoading ? "Buscando..." : "Nenhum indivíduo encontrado."}
       </Text>
     </View>
   );
@@ -41,7 +39,6 @@ const SearchPerson = () => {
 
   return (
     <Wrapper title="Consultar indivíduo">
-      {/* Barra de Busca */}
       <View style={styles.inputContainer}>
         <Ionicons
           name="search"
@@ -49,15 +46,41 @@ const SearchPerson = () => {
           color="#1d4ed8"
           style={styles.inputIcon}
         />
+
         <TextInput
           style={styles.input}
-          placeholder="Digite o nome completo..."
+          placeholder="Buscar por nome ou CPF..."
           placeholderTextColor="#666"
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCorrect={false}
         />
+
+        {/* Lógica: Se estiver carregando, mostra o spinner. 
+      Se não estiver e tiver texto, mostra o X para limpar */}
+        {isLoading ? (
+          <ActivityIndicator
+            size="small"
+            color="#1d4ed8"
+            style={{ marginRight: 10 }}
+          />
+        ) : (
+          searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchQuery("")}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} // Aumenta a área de toque
+            >
+              <Ionicons
+                name="close-circle"
+                size={20}
+                color="#666"
+                style={{ marginRight: 10 }}
+              />
+            </TouchableOpacity>
+          )
+        )}
       </View>
+
       <FlatList
         data={peopleList}
         keyExtractor={(item) => item.id.toString()}
@@ -75,7 +98,6 @@ const SearchPerson = () => {
             <Ionicons name="chevron-forward" size={20} color="#334155" />
           </TouchableOpacity>
         )}
-        // Isso aqui permite "puxar para baixo" para atualizar a lista!
         onRefresh={refetch}
         refreshing={isLoading}
         ListEmptyComponent={renderEmptyComponent}

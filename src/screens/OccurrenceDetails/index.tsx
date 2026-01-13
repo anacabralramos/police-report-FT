@@ -52,17 +52,20 @@ const OccurrenceDetails = () => {
         </View>
 
         {/* 5. Envolvidos */}
-        {occurrence?.involved && occurrence?.involved.length && (
-          <View style={styles.infoCard}>
-            <Text style={styles.label}>Envolvidos</Text>
-            {occurrence.involved.map((person, index) => (
-              <View key={index} style={styles.personTag}>
-                <Ionicons name="person-outline" size={16} color="#1d4ed8" />
-                <Text style={styles.personTagText}>{person}</Text>
-              </View>
-            ))}
-          </View>
-        )}
+        {occurrence?.ocorrencia_envolvidos &&
+          occurrence?.ocorrencia_envolvidos.length && (
+            <View style={styles.infoCard}>
+              <Text style={styles.label}>Envolvidos</Text>
+              {occurrence.ocorrencia_envolvidos.map((person, index) => (
+                <View key={index} style={styles.personTag}>
+                  <Ionicons name="person-outline" size={16} color="#1d4ed8" />
+                  <Text style={styles.personTagText}>
+                    {person.pessoas.nome}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
       </View>
     </ScrollView>
   );
