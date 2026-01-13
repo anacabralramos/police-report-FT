@@ -1,3 +1,5 @@
+export { default as Wrapper } from "./Wrapper";
+export { default as InvolvedInLinking } from "./InvolvedInLinking";
 export { default as DatePicker } from "./DatePicker";
 export { default as ImageCarousel } from "./ImageCarousel";
 export { default as FilterCarousel } from "./FilterCarousel";

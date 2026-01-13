@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   // --- Estilos Globais / Reciclados ---
-  container: { padding: 20 },
+  // container: { padding: 20 },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",

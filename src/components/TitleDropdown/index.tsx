@@ -10,7 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { TITULOS_PADRAO } from "../../constants";
-import { OccurrenceForm } from "../../types";
+import { OccurrenceForm } from "@types";
 import { styles } from "./styles";
 
 interface TitleDropdownProps {

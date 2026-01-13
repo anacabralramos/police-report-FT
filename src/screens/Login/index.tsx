@@ -1,27 +1,20 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Image,
   ActivityIndicator,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
-
-import { useSignIn } from "../../hooks";
+import { useSignIn } from "@hooks";
 import { styles } from "./styles";
 
 const Login = () => {
-  const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // const [loading, setLoading] = useState(false);
 
   const { mutate: signIn, isPending } = useSignIn();
 

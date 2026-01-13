@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { OccurrenceFilter } from "../../types";
+import { OccurrenceFilter } from "@types";
 import { filters } from "./contants";
 import { styles } from "./styles";
 

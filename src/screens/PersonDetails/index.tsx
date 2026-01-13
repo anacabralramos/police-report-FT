@@ -3,9 +3,9 @@ import { View, Text, ScrollView } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { RootStackParamList } from "../../navigation";
-import { usePersonDetails } from "../../hooks";
-import { formatDate } from "../../utils";
+import { RootStackParamList } from "@navigation";
+import { usePersonDetails } from "@hooks";
+import { formatDate } from "@utils";
 import { styles } from "./styles";
 
 type PersonDetailsRouteProp = RouteProp<RootStackParamList, "PersonDetails">;

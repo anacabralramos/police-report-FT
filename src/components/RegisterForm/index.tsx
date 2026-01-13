@@ -10,8 +10,8 @@ import {
   KeyboardAvoidingView, // Adicionado
   Platform,
 } from "react-native";
-import { Person, SelectedPerson } from "../../types";
-import { useCreatePerson } from "../../hooks";
+import { Person, SelectedPerson } from "@types";
+import { useCreatePerson } from "@hooks";
 import { maskCPF, maskRG } from "./masks";
 import DatePicker from "../DatePicker";
 import { styles } from "./styles";

@@ -8,29 +8,24 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from "react-native";
 
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { Person, SelectedPerson } from "@types";
+import { useAppNavigation } from "@navigation";
 import { Ionicons } from "@expo/vector-icons";
+import { useOccurrenceStore } from "@store";
+import { RegisterForm } from "@components";
+import { usePeople } from "@hooks";
 
-import { RootStackParamList } from "../../navigation";
-import { Person, SelectedPerson } from "../../types";
-import { RegisterForm } from "../../components";
-import { usePeople } from "../../hooks";
 import { styles } from "./styles";
-import { useOccurrenceStore } from "../../store/occurrenceStore";
 
 export default function LinkThoseInvolved() {
   const insets = useSafeAreaInsets();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useAppNavigation();
+
   const setTempSelectedPeople = useOccurrenceStore(
     (state) => state.setTempSelectedPeople
   );
-  // const setStoreSelectedPeople = useSelectionStore(state => state.setSelectedPeople);
-  // const setUser = useAuthStore((state) => state.setUser);
 
   // Estados de busca e seleção
   const [searchText, setSearchText] = useState("");

@@ -1,6 +1,6 @@
 import React from "react";
 import { FlatList, Image, View, StyleSheet, Dimensions } from "react-native";
-import { getImageUrl } from "../../hooks";
+import { getImageUrl } from "@hooks";
 
 const { width } = Dimensions.get("window");
 

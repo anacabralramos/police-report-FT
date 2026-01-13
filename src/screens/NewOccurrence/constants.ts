@@ -1,4 +1,4 @@
-import { OccurrenceForm } from "../../types";
+import { OccurrenceForm } from "@types";
 
 export const initialFormState: OccurrenceForm = {
   titulo: "",

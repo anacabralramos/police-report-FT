@@ -1,4 +1,4 @@
-import { OccurrenceFilter } from "../../types";
+import { OccurrenceFilter } from "@types";
 
 export const filters: { id: OccurrenceFilter; label: string; icon: string }[] =
   [

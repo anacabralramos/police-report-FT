@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { styles } from "./styles";
-import { OccurrenceForm } from "../../types";
+import { OccurrenceForm } from "@types";
 
 interface PhotoUploaderProps {
   images: string[];

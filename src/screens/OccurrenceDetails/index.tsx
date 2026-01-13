@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text, ScrollView } from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 
-import { RootStackParamList } from "../../navigation";
-import { useOccurrenceDetails } from "../../hooks";
-import { ImageCarousel } from "../../components";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { RootStackParamList } from "@navigation";
+import { Ionicons } from "@expo/vector-icons";
+import { useOccurrenceDetails } from "@hooks";
+import { ImageCarousel } from "@components";
+import { formatDateToLocale } from "@utils";
+
 import { styles } from "./styles";
-import { formatDateToLocale } from "../../utils";
 
 type PersonDetailsRouteProp = RouteProp<
   RootStackParamList,
