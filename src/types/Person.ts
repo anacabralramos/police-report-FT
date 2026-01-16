@@ -4,6 +4,7 @@ export interface Person {
   rg: string;
   data_nascimento: Date;
   endereco: string;
+  fotos: string[];
 }
 
 export interface SelectedPerson {

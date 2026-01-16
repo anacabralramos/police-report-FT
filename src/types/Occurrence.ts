@@ -5,8 +5,7 @@ export interface OccurrenceForm {
   descricao: string;
   localizacao: string;
   data_hora: Date;
-  fotos: string[];
-  envolvidos: SelectedPerson[]; // Lista de objetos (id, nome) para exibir na tela
+  envolvidos: SelectedPerson[];
 }
 
 export interface OccurrenceDetails {
@@ -15,7 +14,6 @@ export interface OccurrenceDetails {
   descricao: string;
   envolvidos_cpfs: string;
   envolvidos_nomes: string;
-  fotos: string[];
   id: string;
   localizacao: string;
   titulo: string;

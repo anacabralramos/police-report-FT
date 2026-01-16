@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, FlatList, ActivityIndicator } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { OccurrenceFilter } from "@types";
 import { useOccurrences } from "@hooks";
 import {
   DatePicker,
-  FilterByInvolved,
   FilterByTitle,
   FilterCarousel,
+  Input,
   OccurrenceCard,
+  Typography,
   Wrapper,
 } from "@components";
 
@@ -22,7 +23,11 @@ const SearchOccurrence = () => {
   const [filterText, setFilterText] = useState("");
   const [filterDate, setFilterDate] = useState(new Date());
 
-  const { data: occurrences } = useOccurrences({
+  const {
+    data: occurrences,
+    isLoading,
+    isFetching,
+  } = useOccurrences({
     option: filterOption,
     text: filterText,
     date: filterDate,
@@ -37,44 +42,55 @@ const SearchOccurrence = () => {
     }
   };
 
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Ionicons name="document-text-outline" size={60} color="#334155" />
+      <Typography variant="default" color="#8e8e93">
+        Nenhuma ocorrência encontrada.
+      </Typography>
+    </View>
+  );
+
   return (
     <Wrapper title="Ocorrências">
       <FilterCarousel
         selectedFilter={filterOption}
         onSelectFilter={handleChangeFilter}
       />
-      {/* Renderização Condicional do Input baseada no Filtro */}
+
+      {filterOption === "INVOLVED" && (
+        <Input
+          placeholder="Nome ou CPF do envolvido..."
+          placeholderTextColor="#666"
+          value={filterText}
+          onChangeText={setFilterText}
+          iconName="people"
+        />
+      )}
+
       {filterOption === "TITLE" && (
         <FilterByTitle filterText={filterText} setFilterText={setFilterText} />
       )}
       {filterOption === "DATE" && (
         <DatePicker
-          label="Selecione o dia"
           date={filterDate || new Date()}
           onChange={(d) => setFilterDate(d)}
           mode="date"
         />
       )}
-      {filterOption === "INVOLVED" && (
-        <FilterByInvolved
-          filterText={filterText}
-          setFilterText={setFilterText}
+
+      {isLoading || isFetching ? (
+        <ActivityIndicator size="large" color="white" style={styles.flex} />
+      ) : (
+        <FlatList
+          style={styles.flex}
+          data={occurrences}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.container}
+          renderItem={({ item }) => <OccurrenceCard occurrence={item} />}
+          ListEmptyComponent={renderEmptyComponent}
         />
       )}
-
-      {/* Lista de Ocorrências */}
-      <FlatList
-        data={occurrences}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ marginTop: 10, paddingBottom: 20 }}
-        renderItem={({ item }) => <OccurrenceCard occurrence={item} />}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="document-text-outline" size={60} color="#334155" />
-            <Text style={styles.emptyText}>Nenhuma ocorrência encontrada.</Text>
-          </View>
-        }
-      />
     </Wrapper>
   );
 };

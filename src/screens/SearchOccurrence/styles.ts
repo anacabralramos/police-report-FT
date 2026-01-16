@@ -1,15 +1,16 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  // Estados Vazios
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
     marginTop: 60,
+    gap: 16,
   },
-  emptyText: {
-    color: "#8e8e93",
-    fontSize: 16,
-    marginTop: 16,
+  container: {
+    marginTop: 15,
+    gap: 10,
+    paddingBottom: 20,
   },
+  flex: { flex: 1 },
 });
