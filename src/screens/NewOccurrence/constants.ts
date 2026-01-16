@@ -5,6 +5,5 @@ export const initialFormState: OccurrenceForm = {
   descricao: "",
   localizacao: "",
   data_hora: new Date(),
-  fotos: [],
   envolvidos: [],
 };

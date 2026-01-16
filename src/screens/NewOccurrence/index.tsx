@@ -1,31 +1,16 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
 
 import { CreateOccurrencePayload, useCreateOccurrence } from "@hooks";
+import { Wrapper, DatePicker, Input, Typography } from "@components";
 import { useAuthStore, useOccurrenceStore } from "@store";
-import { useAppNavigation } from "@navigation";
-import { Ionicons } from "@expo/vector-icons";
 import { OccurrenceForm } from "@types";
-import {
-  Wrapper,
-  DatePicker,
-  InvolvedInLinking,
-  PhotoUploader,
-  TitleDropdown,
-} from "@components";
 
+import { InvolvedInLinking, Section, TitleDropdown } from "./components";
 import { initialFormState } from "./constants";
 import { styles } from "./styles";
 
 export default function NewOccurrence() {
-  const navigation = useAppNavigation();
   const { user } = useAuthStore();
 
   const involved = useOccurrenceStore((state) => state.selectedPeople);
@@ -41,13 +26,6 @@ export default function NewOccurrence() {
 
   const updateField = (field: keyof OccurrenceForm, value: any) => {
     setFormOccurrence((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const removeImage = (uriToRemove: string) => {
-    setFormOccurrence((prev) => ({
-      ...prev,
-      fotos: prev.fotos.filter((uri) => uri !== uriToRemove),
-    }));
   };
 
   const handleSave = async () => {
@@ -83,83 +61,53 @@ export default function NewOccurrence() {
 
   return (
     <Wrapper title="Novo cadastro" useScroll>
-      {/* Seção de Fotos */}
-      <PhotoUploader
-        images={formOccurrence.fotos}
-        removeImage={removeImage}
-        updateForm={updateField}
-      />
-
-      {/* Lista de Envolvidos Selecionados */}
       <InvolvedInLinking involved={involved} onDelete={removePerson} />
 
-      {/* Botão de Envolvidos */}
-      <TouchableOpacity
-        style={[styles.button, styles.buttonSecondary, { opacity: 0.6 }]}
-        onPress={() => navigation.navigate("LinkThoseInvolved")}
-      >
-        <Ionicons
-          name="person-add"
-          size={20}
-          color="#fff"
-          style={{ marginRight: 10 }}
-        />
-        <Text style={styles.buttonText}>Vincular Envolvidos</Text>
-      </TouchableOpacity>
+      <Section title="Título">
+        <TitleDropdown title={formOccurrence.titulo} updateForm={updateField} />
+      </Section>
 
-      {/* Campo de titulo */}
-      <TitleDropdown title={formOccurrence.titulo} updateForm={updateField} />
-
-      {/* Campo Localização */}
-      <Text style={styles.label}>Local da Abordagem</Text>
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="location"
-          size={20}
-          color="#1d4ed8"
-          style={styles.inputIcon}
-        />
-        <TextInput
-          style={styles.input}
+      <Section title="Local">
+        <Input
           placeholder="Ex: Av. Principal, 123 - Centro"
           placeholderTextColor="#666"
           value={formOccurrence.localizacao}
           onChangeText={(text) => updateField("localizacao", text)}
+          iconName="location"
         />
-      </View>
+      </Section>
 
-      <DatePicker
-        label="Data e Hora"
-        date={formOccurrence.data_hora}
-        onChange={(date) => updateField("data_hora", date)}
-      />
+      <Section title="Descrição">
+        <Input
+          placeholder="Descreva detalhadamente os fatos..."
+          placeholderTextColor="#666"
+          multiline
+          numberOfLines={6}
+          textAlignVertical="top"
+          value={formOccurrence.descricao}
+          onChangeText={(text) => updateField("descricao", text)}
+        />
+      </Section>
 
-      {/* Campo Descrição */}
-      <Text style={styles.label}>Relato da Ocorrência</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Descreva detalhadamente os fatos..."
-        placeholderTextColor="#666"
-        multiline
-        numberOfLines={6}
-        textAlignVertical="top"
-        value={formOccurrence.descricao}
-        onChangeText={(text) => updateField("descricao", text)}
-      />
+      <Section title="Data">
+        <DatePicker
+          date={formOccurrence.data_hora}
+          onChange={(date) => updateField("data_hora", date)}
+        />
+      </Section>
 
-      {/* Botão Salvar (Final) */}
       <TouchableOpacity
-        style={[styles.buttonMain, isPending && { opacity: 0.7 }]}
+        style={[styles.button, isPending && styles.buttonPending]}
         onPress={handleSave}
         disabled={isPending}
       >
         {isPending ? (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={styles.buttonLoading}>
             <ActivityIndicator color="#fff" style={{ marginRight: 10 }} />
-            <Text style={styles.buttonText}>SALVANDO...</Text>
+            <Typography variant="largeDefault">SALVANDO...</Typography>
           </View>
         ) : (
-          <Text style={styles.buttonText}>SALVAR OCORRÊNCIA</Text>
+          <Typography variant="largeDefault">SALVAR OCORRÊNCIA</Typography>
         )}
       </TouchableOpacity>
     </Wrapper>
