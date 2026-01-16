@@ -1,69 +1,77 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
-
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { View, ScrollView, ActivityIndicator } from "react-native";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
+import { Card, Typography, Badge, InfoField, InvolvedCard } from "@components";
 import { RootStackParamList } from "@navigation";
-import { Ionicons } from "@expo/vector-icons";
 import { useOccurrenceDetails } from "@hooks";
-import { ImageCarousel } from "@components";
 import { formatDateToLocale } from "@utils";
-
 import { styles } from "./styles";
 
-type PersonDetailsRouteProp = RouteProp<
+type OccurrenceDetailsRouteProp = RouteProp<
   RootStackParamList,
   "OccurrenceDetails"
 >;
 
 const OccurrenceDetails = () => {
-  const { params } = useRoute<PersonDetailsRouteProp>();
+  const { params } = useRoute<OccurrenceDetailsRouteProp>();
+  const navigation = useNavigation<any>();
   const { data: occurrence, isLoading } = useOccurrenceDetails(params.id);
 
-  const namesArray = occurrence.envolvidos_nomes?.split(" | ") || [];
+  if (isLoading) {
+    return (
+      <View style={styles.loadingCenter}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+      </View>
+    );
+  }
+
+  const namesArray = occurrence?.envolvidos_nomes?.split(" | ") || [];
+  const idsArray = occurrence?.envolvidos_ids?.split(" | ") || [];
+
   return (
-    <ScrollView style={styles.mainContainer}>
-      {/* 1. Carrossel de Imagens */}
-      <ImageCarousel images={occurrence.fotos} />
+    <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
+      <Typography variant="title">{occurrence?.titulo}</Typography>
+      <Badge text="OCORRÊNCIA REGISTRADA" />
 
-      <View style={styles.container}>
-        {/* 2. Cabeçalho e Data */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.titleText}>{occurrence.titulo}</Text>
-          <View style={styles.row}>
-            <Ionicons name="calendar-outline" size={16} color="#1d4ed8" />
-            <Text style={styles.dateText}>
-              {formatDateToLocale(occurrence.data_hora)}
-            </Text>
-          </View>
+      <View style={styles.contentContainer}>
+        {/* Card de Informações Gerais */}
+        <Card childrenCustomStyles={styles.cardGap}>
+          <InfoField
+            label="DATA E HORA"
+            value={formatDateToLocale(occurrence?.data_hora)}
+            icon="calendar-outline"
+          />
+          <InfoField
+            label="LOCALIZAÇÃO"
+            value={occurrence?.localizacao}
+            icon="location-outline"
+          />
+        </Card>
+
+        {/* Relato da Equipe */}
+        <Card>
+          <Typography variant="smallDefault">RELATO DA EQUIPE</Typography>
+          <Typography variant="default" style={styles.description}>
+            {occurrence?.descricao}
+          </Typography>
+        </Card>
+
+        {/* Envolvidos - Usando a mesma estética de lista */}
+        <Typography variant="largeDefault">ENVOLVIDOS</Typography>
+
+        <View>
+          {namesArray.map((person, index) => (
+            <InvolvedCard
+              key={index}
+              nome={person}
+              onPress={() =>
+                navigation.navigate("PersonDetails", { id: idsArray[index] })
+              }
+              iconName="chevron-forward"
+              iconColor="#334155"
+            />
+          ))}
         </View>
-
-        {/* 3. Localização */}
-        <View style={styles.infoCard}>
-          <Text style={styles.label}>Local da Ocorrência</Text>
-          <View style={styles.row}>
-            <Ionicons name="location-outline" size={18} color="#8e8e93" />
-            <Text style={styles.infoText}>{occurrence.localizacao}</Text>
-          </View>
-        </View>
-
-        {/* 4. Descrição / Relato */}
-        <View style={styles.infoCard}>
-          <Text style={styles.label}>Relato da Equipe</Text>
-          <Text style={styles.descriptionText}>{occurrence.descricao}</Text>
-        </View>
-
-        {/* 5. Envolvidos */}
-        {namesArray.length && (
-          <View style={styles.infoCard}>
-            <Text style={styles.label}>Envolvidos</Text>
-            {namesArray.map((person, index) => (
-              <View key={index} style={styles.personTag}>
-                <Ionicons name="person-outline" size={16} color="#1d4ed8" />
-                <Text style={styles.personTagText}>{person}</Text>
-              </View>
-            ))}
-          </View>
-        )}
       </View>
     </ScrollView>
   );
