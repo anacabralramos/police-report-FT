@@ -17,8 +17,9 @@ export function useOccurrenceDetails(id: string) {
           ocorrencia_envolvidos (
             pessoa_id,
             pessoas ( 
+              id,
               nome,
-              cpf 
+              cpf,
             )
           )
         `
@@ -27,7 +28,31 @@ export function useOccurrenceDetails(id: string) {
         .single();
 
       if (error) throw error;
-      return data;
+
+      const cpfs: string[] = [];
+      const ids: string[] = [];
+      const nomes: string[] = [];
+
+      data.ocorrencia_envolvidos.forEach((item) => {
+        cpfs.push(item.pessoas.cpf);
+        nomes.push(item.pessoas.nome);
+        ids.push(item.pessoas.id);
+      });
+      const envolvidos_cpfs = cpfs.join(" | ");
+      const envolvidos_nomes = nomes.join(" | ");
+      const envolvidos_ids = ids.join(" | ");
+
+      return {
+        created_at: data.created_at,
+        data_hora: data.data_hora,
+        descricao: data.descricao,
+        id: data.id,
+        localizacao: data.localizacao,
+        titulo: data.titulo,
+        envolvidos_cpfs,
+        envolvidos_ids,
+        envolvidos_nomes,
+      };
     },
 
     initialData: () => {

@@ -1,13 +1,29 @@
 import { Alert } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { uploadPhotos } from "@hooks";
+
 import { supabase } from "../lib";
 import { Person } from "../types";
+
+export interface CreatePersonPayload extends Person {
+  criado_por: string;
+}
 
 export function useCreatePerson() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (newPerson: Person) => {
+    mutationFn: async (newPerson: CreatePersonPayload) => {
+      // 1. FAZER O UPLOAD DAS FOTOS PRIMEIRO
+      // Isso transforma ['file://...'] em ['caminho/no/storage.jpg']
+      let remotePhotoPaths: string[] = [];
+      if (newPerson.fotos.length > 0) {
+        remotePhotoPaths = await uploadPhotos(
+          newPerson.fotos,
+          newPerson.criado_por
+        );
+      }
+
       const { data, error } = await supabase
         .from("pessoas")
         .insert([
@@ -17,6 +33,7 @@ export function useCreatePerson() {
             rg: newPerson.rg.replace(/[^0-9Xx]/g, ""),
             data_nascimento: newPerson.data_nascimento,
             endereco: newPerson.endereco,
+            fotos: remotePhotoPaths,
           },
         ])
         .select() // Importante para retornar a pessoa com o ID gerado

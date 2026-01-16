@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { OccurrenceForm } from "../types";
-import { uploadPhotos } from "./utils";
 import { supabase } from "../lib";
 
 export interface CreateOccurrencePayload extends OccurrenceForm {
@@ -12,17 +11,7 @@ export function useCreateOccurrence() {
 
   return useMutation({
     mutationFn: async (payload: CreateOccurrencePayload) => {
-      // 1. FAZER O UPLOAD DAS FOTOS PRIMEIRO
-      // Isso transforma ['file://...'] em ['caminho/no/storage.jpg']
-      let remotePhotoPaths: string[] = [];
-      if (payload.fotos.length > 0) {
-        remotePhotoPaths = await uploadPhotos(
-          payload.fotos,
-          payload.criado_por
-        );
-      }
-
-      // 2. INSERIR A OCORRÊNCIA (com os caminhos das fotos do storage)
+      // 1. INSERIR A OCORRÊNCIA (com os caminhos das fotos do storage)
       const { data: occurrence, error: occError } = await supabase
         .from("ocorrencias")
         .insert([
@@ -31,7 +20,6 @@ export function useCreateOccurrence() {
             descricao: payload.descricao,
             localizacao: payload.localizacao,
             data_hora: payload.data_hora,
-            fotos: remotePhotoPaths, // Agora são os caminhos remotos
             criado_por: payload.criado_por,
           },
         ])

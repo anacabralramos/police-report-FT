@@ -16,7 +16,7 @@ export function useOccurrences({ option, text, date }: UseOccurrencesProps) {
       // 1. Apontamos para a nossa nova VIEW
       let query = supabase.from("ocorrencias_com_envolvidos").select("*");
 
-      console.log({ option, date });
+      // console.log({ option, date });
       // 2. Filtro por TÍTULO (na própria ocorrência)
       if (option === "TITLE" && text) {
         query = query.ilike("titulo", `%${text}%`);
@@ -49,9 +49,8 @@ export function useOccurrences({ option, text, date }: UseOccurrencesProps) {
 
       // 5. Ordenação e Limite
       const { data, error } = await query
-        // .order("created_at", { ascending: false })
         .order("data_hora", { ascending: false })
-        .limit(50);
+        .range(0, 19);
 
       if (error) throw error;
       return data;
