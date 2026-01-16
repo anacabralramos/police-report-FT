@@ -1,9 +1,10 @@
 import React from "react";
-import { ScrollView, TouchableOpacity, Text, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { OccurrenceFilter } from "@types";
 
+import Typography from "../Typography";
 import { filters } from "./contants";
 import { styles } from "./styles";
 
@@ -43,13 +44,10 @@ const FilterCarousel = ({
                 name={filter.icon as any}
                 size={16}
                 color={isActive ? "#FFF" : "#8e8e93"}
-                style={{ marginRight: 6 }}
               />
-              <Text
-                style={[styles.chipText, isActive && styles.chipTextActive]}
-              >
+              <Typography variant="smallDefault" color={isActive ? "#FFF" : ""}>
                 {filter.label}
-              </Text>
+              </Typography>
             </TouchableOpacity>
           );
         })}

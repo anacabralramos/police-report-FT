@@ -1,20 +1,20 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { styles } from "./styles";
+import { View, ScrollView, TouchableOpacity } from "react-native";
 import { TITULOS_PADRAO } from "@constants";
 
-// Componente de Sugestões Rápidas
-const QuickSuggestions = ({
-  onSelect,
-}: {
+import Typography from "components/Typography";
+import { styles } from "./styles";
+
+interface QuickSuggestionsProps {
   onSelect: (val: string) => void;
-}) => (
-  <View style={styles.suggestionsWrapper}>
-    <Text style={styles.suggestionTitle}>Sugestões:</Text>
+}
+
+const QuickSuggestions = ({ onSelect }: QuickSuggestionsProps) => (
+  <View style={styles.container}>
+    <Typography variant="smallDefault">SUGESTÕES:</Typography>
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={styles.suggestionScroll}
-      contentContainerStyle={{ paddingRight: 20 }}
+      contentContainerStyle={{ gap: 10 }}
     >
       {TITULOS_PADRAO.map((item) => (
         <TouchableOpacity
@@ -22,7 +22,9 @@ const QuickSuggestions = ({
           style={styles.suggestionChip}
           onPress={() => onSelect(item)}
         >
-          <Text style={styles.suggestionChipText}>{item}</Text>
+          <Typography variant="default" color="#3b82f6">
+            {item}
+          </Typography>
         </TouchableOpacity>
       ))}
     </ScrollView>

@@ -1,29 +1,21 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
-import {
-  FlatList,
-  Image,
-  View,
-  Text,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { Image, View, TouchableOpacity, Alert, ScrollView } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-
 import { styles } from "./styles";
-import { OccurrenceForm } from "@types";
+import Typography from "components/Typography";
 
 interface PhotoUploaderProps {
   images: string[];
   removeImage: (uri: string) => void;
-  updateForm: (field: keyof OccurrenceForm, value: any) => void;
+  updateFotos: (fotos: string[]) => void;
 }
 
 export default function PhotoUploader({
   images,
   removeImage,
-  updateForm,
+  updateFotos,
 }: PhotoUploaderProps) {
   const openCam = async () => {
     // 1. Solicita permissão de câmera
@@ -47,27 +39,27 @@ export default function PhotoUploader({
     if (!result.canceled) {
       // Como a câmera tira uma foto por vez, pegamos o primeiro item do array assets
       const newImageUri = result.assets[0].uri;
-      updateForm("fotos", [...images, newImageUri]);
+      updateFotos([...images, newImageUri]);
     }
   };
 
   const openLibrary = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
-      allowsMultipleSelection: true, // Permite selecionar várias
+      allowsMultipleSelection: true,
       quality: 0.7,
     });
 
     if (!result.canceled) {
       const selectedUris = result.assets.map((asset) => asset.uri);
-      updateForm("fotos", [...images, selectedUris]);
+      updateFotos([...images, ...selectedUris]);
     }
   };
 
   const handleAddPhoto = () => {
     Alert.alert("Anexar Evidência", "Como deseja adicionar a foto?", [
-      { text: "Câmera", onPress: openCam }, // chama a função de câmera
-      { text: "Galeria", onPress: openLibrary }, // chama a função de galeria
+      { text: "Câmera", onPress: openCam },
+      { text: "Galeria", onPress: openLibrary },
       { text: "Cancelar", style: "cancel" },
     ]);
   };
@@ -76,15 +68,14 @@ export default function PhotoUploader({
     <View style={styles.photoSection}>
       <TouchableOpacity style={styles.addPhotoButton} onPress={handleAddPhoto}>
         <Ionicons name="camera" size={30} color="#fff" />
-        <Text style={styles.addPhotoText}>Adicionar</Text>
+        <Typography variant="smallDefault" color="#fff">
+          Adicionar
+        </Typography>
       </TouchableOpacity>
 
-      <FlatList
-        horizontal
-        data={images}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <View style={styles.imageContainer}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {images.map((item) => (
+          <View key={item} style={styles.imageContainer}>
             <Image source={{ uri: item }} style={styles.thumbnail} />
             <TouchableOpacity
               style={styles.removeBadge}
@@ -93,9 +84,8 @@ export default function PhotoUploader({
               <Ionicons name="close-circle" size={20} color="#ff4444" />
             </TouchableOpacity>
           </View>
-        )}
-        showsHorizontalScrollIndicator={false}
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 }

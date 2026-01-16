@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   wrapper: {
@@ -7,9 +7,6 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 25,
+    marginBottom: 10,
   },
 });

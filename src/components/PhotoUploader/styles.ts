@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  photoSection: { flexDirection: "row", marginBottom: 25, height: 100 },
+  photoSection: { flexDirection: "row" },
   addPhotoButton: {
     width: 90,
     height: 90,
@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
     borderColor: "#334155",
     marginRight: 10,
   },
-  addPhotoText: { color: "#fff", fontSize: 12, marginTop: 5 },
   imageContainer: { marginRight: 10, position: "relative" },
   thumbnail: { width: 90, height: 90, borderRadius: 12 },
   removeBadge: {
