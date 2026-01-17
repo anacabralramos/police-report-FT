@@ -71,7 +71,7 @@ export default function RegisterForm({
       >
         <View style={styles.header}>
           <Typography>Novo Cadastro</Typography>
-          <TouchableOpacity onPress={onClose}>
+          <TouchableOpacity onPress={onClose} disabled={isPending}>
             <Ionicons name="close" size={28} color="#fff" />
           </TouchableOpacity>
         </View>

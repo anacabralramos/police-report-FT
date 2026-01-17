@@ -1,8 +1,19 @@
 import React, { useState } from "react";
 import { useDebounce } from "use-debounce";
-import { View, FlatList, ActivityIndicator } from "react-native";
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 
-import { Input, PersonCard, Typography, Wrapper } from "@components";
+import {
+  Input,
+  PersonCard,
+  Typography,
+  Wrapper,
+  RegisterForm,
+} from "@components";
 import { Ionicons } from "@expo/vector-icons";
 import { usePeople } from "@hooks";
 
@@ -11,6 +22,8 @@ import { styles } from "./styles";
 const SearchPerson = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch] = useDebounce(searchQuery, 500);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const {
     data: peopleList,
     fetchNextPage,
@@ -40,6 +53,7 @@ const SearchPerson = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
+
         {isLoading ? (
           <ActivityIndicator size="large" color="white" style={{ flex: 1 }} />
         ) : (
@@ -58,14 +72,30 @@ const SearchPerson = () => {
             ListEmptyComponent={renderEmptyComponent}
             contentContainerStyle={styles.contentContainer}
             onEndReached={() => {
-              if (hasNextPage) fetchNextPage();
+              if (hasNextPage && !isFetchingNextPage) fetchNextPage();
             }}
-            onEndReachedThreshold={0.5} // Carrega quando chegar na metade do último item
+            onEndReachedThreshold={0.5}
             ListFooterComponent={
-              isFetchingNextPage ? <ActivityIndicator /> : null
+              isFetchingNextPage ? <ActivityIndicator color="white" /> : null
             }
           />
         )}
+
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => setIsModalVisible(true)}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="add" size={32} color="white" />
+        </TouchableOpacity>
+
+        <RegisterForm
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          onSuccess={() => {
+            setIsModalVisible(false);
+          }}
+        />
       </View>
     </Wrapper>
   );
