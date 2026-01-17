@@ -6,16 +6,19 @@ import {
   Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  TouchableOpacity,
 } from "react-native";
-import { getImageUrl } from "@hooks";
-import { styles } from "./styles";
 import { Ionicons } from "@expo/vector-icons";
+import { getImageUrl } from "@hooks";
+
 import Typography from "components/Typography";
+import { styles } from "./styles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function ImageCarousel({ images }: { images: string[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
@@ -23,7 +26,6 @@ export default function ImageCarousel({ images }: { images: string[] }) {
     setActiveIndex(index);
   };
 
-  // Se não houver imagens, exibe uma imagem padrão de "sem foto"
   if (!images || images.length === 0) {
     return (
       <View style={styles.container}>
@@ -50,11 +52,16 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         scrollEventThrottle={16}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
-          <Image
-            source={{ uri: getImageUrl(item) }}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            <Image
+              source={{ uri: getImageUrl(item) }}
+              style={styles.image}
+              resizeMode={isExpanded ? "contain" : "cover"}
+            />
+          </TouchableOpacity>
         )}
       />
 
@@ -69,7 +76,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
                 style={[
                   styles.dot,
                   isActive ? styles.activeDot : styles.inactiveDot,
-                  { width: isActive ? 20 : 8 }, // Efeito de expansão
+                  { width: isActive ? 20 : 8 },
                 ]}
               />
             );

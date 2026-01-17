@@ -5,7 +5,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   container: {
     width: SCREEN_WIDTH,
-    height: 300,
     backgroundColor: "#161B22",
   },
   image: {
@@ -16,11 +15,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#1c1c1c",
-  },
-  placeholderImage: {
-    width: 100,
-    height: 100,
-    opacity: 0.3,
   },
   paginationContainer: {
     position: "absolute",
