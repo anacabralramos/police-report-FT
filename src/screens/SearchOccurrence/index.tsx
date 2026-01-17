@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, FlatList, ActivityIndicator } from "react-native";
+import { useDebounce } from "use-debounce";
 
 import { Ionicons } from "@expo/vector-icons";
 import { OccurrenceFilter } from "@types";
@@ -18,20 +19,24 @@ import { styles } from "./styles";
 
 const SearchOccurrence = () => {
   const [filterOption, setFilterOption] = useState<OccurrenceFilter | null>(
-    null
+    null,
   );
   const [filterText, setFilterText] = useState("");
+  const [debouncedText] = useDebounce(filterText, 500);
   const [filterDate, setFilterDate] = useState(new Date());
 
   const {
-    data: occurrences,
+    data: occurrencePages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading,
-    isFetching,
   } = useOccurrences({
     option: filterOption,
-    text: filterText,
+    text: debouncedText,
     date: filterDate,
   });
+  const allOccurrences = occurrencePages?.pages.flat() || [];
 
   const handleChangeFilter = (filter: OccurrenceFilter | null) => {
     setFilterOption(filter);
@@ -79,16 +84,25 @@ const SearchOccurrence = () => {
         />
       )}
 
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <ActivityIndicator size="large" color="white" style={styles.flex} />
       ) : (
         <FlatList
           style={styles.flex}
-          data={occurrences}
+          data={allOccurrences}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.container}
           renderItem={({ item }) => <OccurrenceCard occurrence={item} />}
           ListEmptyComponent={renderEmptyComponent}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <ActivityIndicator color="white" style={{ marginVertical: 20 }} />
+            ) : null
+          }
         />
       )}
     </Wrapper>

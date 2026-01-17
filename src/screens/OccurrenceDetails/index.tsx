@@ -25,8 +25,13 @@ const OccurrenceDetails = () => {
     );
   }
 
-  const namesArray = occurrence?.envolvidos_nomes?.split(" | ") || [];
-  const idsArray = occurrence?.envolvidos_ids?.split(" | ") || [];
+  // Dentro do componente OccurrenceDetails:
+  const namesArray = occurrence?.envolvidos_nomes
+    ? occurrence.envolvidos_nomes.split(" | ")
+    : [];
+  const idsArray = occurrence?.envolvidos_ids
+    ? occurrence.envolvidos_ids.split(" | ")
+    : [];
 
   return (
     <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>

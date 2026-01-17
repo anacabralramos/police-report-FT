@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { OccurrenceFilter } from "@types";
 
 import { supabase } from "../lib";
+
+const PAGE_SIZE = 20;
 
 interface UseOccurrencesProps {
   option: OccurrenceFilter | null;
@@ -10,15 +12,31 @@ interface UseOccurrencesProps {
 }
 
 export function useOccurrences({ option, text, date }: UseOccurrencesProps) {
-  return useQuery({
+  // 1. Lógicas de validação para habilitar a busca
+  const cleanText = text.trim();
+  const isTextSearch = option === "TITLE" || option === "INVOLVED";
+  const hasMinChars = cleanText.length >= 3;
+
+  // A query deve rodar se:
+  // - Não houver filtro (lista geral)
+  // - O filtro for data (sempre habilitado)
+  // - O filtro for texto e tiver 3+ caracteres
+  const isEnabled =
+    !option || option === "DATE" || (isTextSearch && hasMinChars);
+
+  return useInfiniteQuery({
     queryKey: ["occurrences", option, text, date],
-    queryFn: async () => {
-      // 1. Apontamos para a nossa nova VIEW
+    initialPageParam: 0,
+    enabled: isEnabled,
+    queryFn: async ({ pageParam = 0 }) => {
+      const from = pageParam * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+
+      // 1. Apontamos para a VIEW
       let query = supabase.from("ocorrencias_com_envolvidos").select("*");
 
-      // console.log({ option, date });
       // 2. Filtro por TÍTULO (na própria ocorrência)
-      if (option === "TITLE" && text) {
+      if (option === "TITLE" && hasMinChars) {
         query = query.ilike("titulo", `%${text}%`);
       }
 
@@ -34,30 +52,30 @@ export function useOccurrences({ option, text, date }: UseOccurrencesProps) {
       }
 
       // 4. Filtro por ENVOLVIDO (usando as colunas agregadas da View)
-      if (option === "INVOLVED" && text) {
-        const cleanText = text.replace(/\D/g, "");
-        const isNumeric = cleanText.length > 0 && /^\d+$/.test(cleanText);
+      if (option === "INVOLVED" && hasMinChars) {
+        const cleanDigits = text.replace(/\D/g, "");
+        const isNumeric =
+          cleanDigits.length >= 3 && /^\d+$/.test(text.replace(/[.-]/g, ""));
 
         if (isNumeric) {
-          // Busca o CPF dentro da string de CPFs agregados (ex: "123... | 456...")
-          query = query.ilike("envolvidos_cpfs", `%${cleanText}%`);
+          query = query.ilike("envolvidos_cpfs", `%${cleanDigits}%`);
         } else {
-          // Busca o nome dentro da string de nomes agregados
-          query = query.ilike("envolvidos_nomes", `%${text}%`);
+          query = query.ilike("envolvidos_nomes", `%${cleanText}%`);
         }
       }
 
       // 5. Ordenação e Limite
       const { data, error } = await query
         .order("data_hora", { ascending: false })
-        .range(0, 19);
+        .range(from, to);
 
       if (error) throw error;
       return data;
     },
-    // Mantém a lista anterior enquanto carrega a nova busca (UX fluida)
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === PAGE_SIZE ? allPages.length : undefined;
+    },
     placeholderData: (previousData) => previousData,
-    // Evita refetch desnecessário se o policial voltar na tela rápido
     staleTime: 1000 * 60 * 2,
   });
 }

@@ -45,6 +45,7 @@ export function useCreateOccurrence() {
       return occurrence;
     },
     onSuccess: () => {
+      // Assim que a ocorrência for salva, o React Query saberá que a lista de ocorrencias está desatualizada, e vai buscar a nova versao atualizada
       queryClient.invalidateQueries({ queryKey: ["occurrences"] });
     },
   });

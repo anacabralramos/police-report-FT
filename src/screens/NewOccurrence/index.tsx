@@ -16,7 +16,7 @@ export default function NewOccurrence() {
   const involved = useOccurrenceStore((state) => state.selectedPeople);
   const removePerson = useOccurrenceStore((state) => state.removePerson);
   const clearInvolved = useOccurrenceStore(
-    (state) => state.clearOccurrenceDraft
+    (state) => state.clearOccurrenceDraft,
   );
 
   const { mutate: createOccurrenceMutate, isPending } = useCreateOccurrence();
@@ -41,7 +41,7 @@ export default function NewOccurrence() {
         Alert.alert(
           "Sucesso!",
           "A ocorrência foi registrada e os envolvidos foram vinculados.",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
 
         // 2. Resetar o formulário local (campos de texto e fotos)
@@ -53,7 +53,7 @@ export default function NewOccurrence() {
       onError: (error: any) => {
         Alert.alert(
           "Erro ao salvar",
-          error.message || "Ocorreu um erro inesperado."
+          error.message || "Ocorreu um erro inesperado.",
         );
       },
     });

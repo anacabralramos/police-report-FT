@@ -22,7 +22,7 @@ export function useOccurrenceDetails(id: string) {
               cpf,
             )
           )
-        `
+        `,
         )
         .eq("id", id)
         .single();
@@ -56,20 +56,26 @@ export function useOccurrenceDetails(id: string) {
     },
 
     initialData: () => {
-      // Buscamos em todas as queries que começam com "occurrences"
-      // (inclusive as que têm filtros como queryKey: ["occurrences", {text: '...'}])
-      const allOccurrencesCaches = queryClient.getQueriesData<any[]>({
+      const allOccurrencesCaches = queryClient.getQueriesData({
         queryKey: ["occurrences"],
       });
 
-      for (const [_, data] of allOccurrencesCaches) {
-        if (Array.isArray(data)) {
-          const found = data.find((occ) => occ.id === id);
-          if (found) return found;
+      for (const [_, cacheData] of allOccurrencesCaches) {
+        // Se vier do useInfiniteQuery, o formato é { pages: [...], pageParams: [...] }
+        if (
+          cacheData &&
+          typeof cacheData === "object" &&
+          "pages" in cacheData
+        ) {
+          for (const page of (cacheData as any).pages) {
+            const found = page.find((occ: any) => occ.id === id);
+            if (found) return found;
+          }
         }
       }
       return undefined;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutos de dados "frescos"
+    staleTime: Infinity, // Considera o dado do cache "sempre novo" nesta sessão
+    gcTime: 1000 * 60 * 30, // Mantém o cache por 30 minutos
   });
 }
