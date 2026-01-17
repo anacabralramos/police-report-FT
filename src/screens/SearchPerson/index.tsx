@@ -11,8 +11,16 @@ import { styles } from "./styles";
 const SearchPerson = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch] = useDebounce(searchQuery, 500);
+  const {
+    data: peopleList,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isRefetching,
+  } = usePeople(debouncedSearch);
 
-  const { data: peopleList, isLoading, refetch } = usePeople(debouncedSearch);
+  const allPeople = peopleList?.pages.flat() || [];
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
@@ -22,6 +30,7 @@ const SearchPerson = () => {
       </Typography>
     </View>
   );
+
   return (
     <Wrapper title="Consultar indivíduo">
       <View style={styles.container}>
@@ -35,7 +44,7 @@ const SearchPerson = () => {
           <ActivityIndicator size="large" color="white" style={{ flex: 1 }} />
         ) : (
           <FlatList
-            data={peopleList}
+            data={allPeople}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <PersonCard
@@ -45,10 +54,16 @@ const SearchPerson = () => {
                 id={item.id}
               />
             )}
-            onRefresh={refetch}
-            refreshing={isLoading}
+            refreshing={isRefetching}
             ListEmptyComponent={renderEmptyComponent}
             contentContainerStyle={styles.contentContainer}
+            onEndReached={() => {
+              if (hasNextPage) fetchNextPage();
+            }}
+            onEndReachedThreshold={0.5} // Carrega quando chegar na metade do último item
+            ListFooterComponent={
+              isFetchingNextPage ? <ActivityIndicator /> : null
+            }
           />
         )}
       </View>

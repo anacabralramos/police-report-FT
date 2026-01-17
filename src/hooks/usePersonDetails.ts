@@ -7,6 +7,7 @@ export function usePersonDetails(id: string) {
   return useQuery({
     queryKey: ["person", id],
     queryFn: async () => {
+      console.log("Chamada de emergência ao banco para o ID:", id);
       const { data, error } = await supabase
         .from("pessoas")
         .select("*")
@@ -16,22 +17,26 @@ export function usePersonDetails(id: string) {
       if (error) throw error;
       return data;
     },
-    // Aqui está o "pulo do gato":
     initialData: () => {
-      // Tentamos encontrar essa pessoa no cache de qualquer busca anterior
-      // Nota: o getQueriesData (no plural) busca em todas as variações da chave 'people'
       const allPeopleCaches = queryClient.getQueriesData({
         queryKey: ["people"],
       });
 
-      for (const [key, data] of allPeopleCaches) {
-        if (Array.isArray(data)) {
-          const found = data.find((p) => p.id === id);
-          if (found) return found;
+      for (const [_, cacheData] of allPeopleCaches) {
+        if (
+          cacheData &&
+          typeof cacheData === "object" &&
+          "pages" in cacheData
+        ) {
+          for (const page of (cacheData as any).pages) {
+            const found = page.find((p: any) => p.id === id);
+            if (found) return found;
+          }
         }
       }
       return undefined;
     },
-    staleTime: 1000 * 60 * 5, // Considera o dado "fresco" por 5 minutos
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60, // Mantém no cache por 1 hora mesmo se não estiver em uso
   });
 }

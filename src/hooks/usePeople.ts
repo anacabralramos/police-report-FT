@@ -1,48 +1,65 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "../lib";
 
-export function usePeople(searchTerm: string, requiredFilter = false) {
-  return useQuery({
-    queryKey: ["people", searchTerm, requiredFilter],
-    queryFn: async () => {
-      const cleanTerm = searchTerm.replace(/\D/g, "");
-      const isNumeric = cleanTerm.length > 0 && /^\d+$/.test(cleanTerm);
+const PAGE_SIZE = 20;
 
-      // Se o filtro for obrigatório e não houver texto suficiente, retorna vazio
-      if (requiredFilter && searchTerm.length < 3 && !isNumeric) {
-        return [];
-      }
+export function usePeople(searchTerm: string) {
+  // 1. Definição das regras de negócio (centralizado)
+  const cleanCPF = searchTerm.replace(/\D/g, "");
+  const cleanName = searchTerm.replace(/[^a-zA-ZÀ-ÿ\s]/g, "").trim();
 
-      // 1. Busca por CPF
-      if (isNumeric) {
+  const isSearchByCPF =
+    cleanCPF.length >= 3 && /^[0-9.\-\s]+$/.test(searchTerm);
+  const isSearchByName = !isSearchByCPF && cleanName.length >= 3;
+  const isInitialLoad = searchTerm.trim().length === 0;
+
+  return useInfiniteQuery({
+    queryKey: ["people", searchTerm],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam = 0 }) => {
+      // O Supabase usa esse formato .range(de, ate) para buscar fatias específicas da tabela.
+      const from = pageParam * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+
+      if (isSearchByCPF) {
         const { data, error } = await supabase
           .from("pessoas")
           .select("*")
-          .ilike("cpf", `%${cleanTerm}%`)
-          .limit(10);
+          .ilike("cpf", `%${cleanCPF}%`)
+          .range(from, to);
+
         if (error) throw error;
-        return data;
+        return data || [];
       }
 
-      // 2. Busca por Nome
-      if (searchTerm.length >= 3) {
+      // CASO B: BUSCA POR NOME
+      if (isSearchByName) {
         const { data, error } = await supabase.rpc("buscar_pessoa_sem_acento", {
-          termo_busca: searchTerm,
+          termo_busca: cleanName,
+          p_limit: PAGE_SIZE,
+          p_offset: from,
         });
+
         if (error) throw error;
-        return data;
+        return data || [];
       }
 
-      // 3. Lista padrão (Só entra aqui se requiredFilter for false)
+      // CASO C: NENHUM FILTRO (LISTA PADRÃO)
       const { data, error } = await supabase
         .from("pessoas")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(20);
+        .range(from, to);
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
+    enabled: isInitialLoad || isSearchByCPF || isSearchByName,
+    // Determina se há mais páginas para carregar. Se a última página trouxe menos de 20 pessoas significa que nao tem mais informaçoes pra puxar.
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === PAGE_SIZE ? allPages.length : undefined;
+    },
+    // Mantem os dados na tela até que os novos dados apareçam.
     placeholderData: (previousData) => previousData,
   });
 }
