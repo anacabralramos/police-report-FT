@@ -44,3 +44,23 @@ export const getImageUrl = (path: string) => {
 
   return data.publicUrl;
 };
+
+export const getRawPath = (url: string) => {
+  // Se não for uma string ou não for uma URL (já é um path ou arquivo local), retorna como está
+  if (typeof url !== "string" || !url.startsWith("http")) {
+    return url;
+  }
+
+  const bucketName = "fotos_ocorrencias";
+
+  // A URL do Supabase segue o padrão: .../storage/v1/object/public/NOME_DO_BUCKET/PATH_DO_ARQUIVO
+  // Dividimos a string a partir do nome do bucket
+  const parts = url.split(`${bucketName}/`);
+
+  // Se a divisão funcionou, a segunda parte (índice 1) é o seu path original
+  if (parts.length > 1) {
+    return parts[1];
+  }
+
+  return url;
+};

@@ -24,7 +24,7 @@ export default function PhotoUploader({
     if (permissionResult.granted === false) {
       Alert.alert(
         "Permissão necessária",
-        "Você precisa permitir o acesso à câmera para tirar fotos das evidências."
+        "Você precisa permitir o acesso à câmera para tirar fotos das evidências.",
       );
       return;
     }

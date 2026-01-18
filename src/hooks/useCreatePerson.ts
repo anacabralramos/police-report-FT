@@ -20,7 +20,7 @@ export function useCreatePerson() {
       if (newPerson.fotos.length > 0) {
         remotePhotoPaths = await uploadPhotos(
           newPerson.fotos,
-          newPerson.criado_por
+          newPerson.criado_por,
         );
       }
 

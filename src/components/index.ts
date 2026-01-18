@@ -14,3 +14,4 @@ export { default as QuickSuggestions } from "./QuickSuggestions";
 export { default as FilterByTitle } from "./FilterByTitle";
 export { default as PhotoUploader } from "./PhotoUploader";
 export { default as RegisterForm } from "./RegisterForm";
+export { default as UpdateForm } from "./UpdateForm";

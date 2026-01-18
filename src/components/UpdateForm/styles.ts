@@ -4,33 +4,35 @@ export const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: "#0A0F14",
-  },
-  container: {
     padding: 20,
   },
-  contentContainer: {
-    marginTop: 25,
-    gap: 20,
-  },
-  gridRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 20,
-  },
-  card: { gap: 15 },
-  headerRow: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 20,
   },
-  editButton: {
+  contentContaioner: {
+    gap: 10,
+  },
+  documentsContainer: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  input: {
+    flex: 1,
+  },
+  button: {
+    backgroundColor: "#1d4ed8",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#eff6ff",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    justifyContent: "center",
+    padding: 16,
     borderRadius: 8,
-    gap: 4,
+    marginTop: 20,
+    gap: 10,
+  },
+  buttonText: {
+    fontWeight: "800",
   },
 });

@@ -1,46 +1,50 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import React, { useState } from "react";
-import { View, TouchableOpacity, ScrollView, Modal, Alert } from "react-native";
+import { View, TouchableOpacity, ScrollView, Modal } from "react-native";
+import { useState } from "react";
 
 import { Input, PhotoUploader, Typography } from "@components";
-import { CreatePersonPayload, useCreatePerson } from "@hooks";
-import { Person, SelectedPerson } from "@types";
+import { UpdatePersonPayload, useUpdatePerson } from "@hooks";
 import { Ionicons } from "@expo/vector-icons";
+import { Person, PersonData } from "@types";
 import { maskCPF, maskRG } from "@utils";
 import { useAuthStore } from "@store";
 
-import { emptyState } from "./constants";
 import DatePicker from "../DatePicker";
 import { styles } from "./styles";
 
-interface RegisterFormProps {
+interface UpdateFormProps {
   visible: boolean;
   onClose: () => void;
-  onSuccess: (person: SelectedPerson) => void;
+  initialData: PersonData;
 }
 
-export default function RegisterForm({
+export default function UpdateForm({
   visible,
   onClose,
-  onSuccess,
-}: RegisterFormProps) {
+  initialData,
+}: UpdateFormProps) {
+  const { mutate: updatePerson, isPending } = useUpdatePerson();
   const insets = useSafeAreaInsets();
-
-  const [formData, setFormData] = useState<Person>(emptyState);
-
   const { user } = useAuthStore();
-  const { mutate: createPersonMutation, isPending } = useCreatePerson();
-  const isFormEmpty = !formData.cpf && !formData.rg && !formData.nome;
 
-  const handleCreateAndAdd = () => {
-    const payload: CreatePersonPayload = {
+  const [formData, setFormData] = useState<Person>(initialData);
+
+  const hasChanges =
+    JSON.stringify(formData) !==
+    JSON.stringify({
+      ...initialData,
+      data_nascimento: initialData.data_nascimento
+        ? new Date(`${initialData.data_nascimento}T12:00:00`)
+        : new Date(),
+    });
+
+  const handleUpdate = () => {
+    const payload: UpdatePersonPayload = {
       ...formData,
       criado_por: user?.id,
     };
-
-    createPersonMutation(payload, {
-      onSuccess: (data) => {
-        onSuccess(data);
+    updatePerson(payload, {
+      onSuccess: () => {
         onClose();
       },
     });
@@ -55,16 +59,9 @@ export default function RegisterForm({
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>
-      <View
-        style={[
-          styles.wrapper,
-          {
-            paddingTop: insets.top + 40,
-          },
-        ]}
-      >
+      <View style={[styles.wrapper, { paddingTop: insets.top + 40 }]}>
         <View style={styles.header}>
-          <Typography>Novo Cadastro</Typography>
+          <Typography>Editar Cadastro</Typography>
           <TouchableOpacity onPress={onClose} disabled={isPending}>
             <Ionicons name="close" size={28} color="#fff" />
           </TouchableOpacity>
@@ -72,10 +69,10 @@ export default function RegisterForm({
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ gap: 10 }}
+          contentContainerStyle={styles.contentContaioner}
         >
           <Typography variant="default" color="#8e8e93">
-            PREENCHA OS DADOS DO INDIVÍDUO:
+            ALTERE OS CAMPOS NECESSÁRIOS:
           </Typography>
 
           <PhotoUploader
@@ -91,9 +88,9 @@ export default function RegisterForm({
             onChangeText={(t) => setFormData({ ...formData, nome: t })}
           />
 
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <View style={styles.documentsContainer}>
             <Input
-              customStyle={{ flex: 1 }}
+              customStyle={styles.input}
               placeholder="CPF"
               placeholderTextColor="#666"
               keyboardType="numeric"
@@ -104,7 +101,7 @@ export default function RegisterForm({
               }
             />
             <Input
-              customStyle={{ flex: 1 }}
+              customStyle={styles.input}
               placeholder="RG"
               placeholderTextColor="#666"
               keyboardType="numeric"
@@ -115,7 +112,11 @@ export default function RegisterForm({
           </View>
 
           <DatePicker
-            date={formData.data_nascimento || new Date()}
+            date={
+              formData.data_nascimento
+                ? new Date(`${formData.data_nascimento}T12:00:00`)
+                : new Date()
+            }
             onChange={(d) => setFormData({ ...formData, data_nascimento: d })}
           />
 
@@ -132,14 +133,14 @@ export default function RegisterForm({
           <TouchableOpacity
             style={[
               styles.button,
-              (isPending || isFormEmpty) && { opacity: 0.6 },
+              (isPending || !hasChanges) && { opacity: 0.6 },
             ]}
-            onPress={handleCreateAndAdd}
-            disabled={isPending || isFormEmpty}
+            onPress={handleUpdate}
+            disabled={isPending || !hasChanges}
           >
-            <Ionicons name="person-add" size={20} color="#fff" />
+            <Ionicons name="save-outline" size={20} color="#fff" />
             <Typography variant="default" style={styles.buttonText}>
-              {isPending ? "Cadastrando..." : "Confirmar Cadastro"}
+              {isPending ? "Salvando..." : "Salvar Alterações"}
             </Typography>
           </TouchableOpacity>
         </ScrollView>

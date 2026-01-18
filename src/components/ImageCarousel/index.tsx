@@ -9,9 +9,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getImageUrl } from "@hooks";
 
-import Typography from "components/Typography";
+import Typography from "../Typography";
 import { styles } from "./styles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -57,7 +56,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
             onPress={() => setIsExpanded(!isExpanded)}
           >
             <Image
-              source={{ uri: getImageUrl(item) }}
+              source={{ uri: item }}
               style={styles.image}
               resizeMode={isExpanded ? "contain" : "cover"}
             />

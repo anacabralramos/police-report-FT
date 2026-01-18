@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getImageUrl } from "@hooks";
 import { supabase } from "../lib";
 
 export function usePersonDetails(id: string) {
@@ -15,7 +16,10 @@ export function usePersonDetails(id: string) {
         .single();
 
       if (error) throw error;
-      return data;
+      return {
+        ...data,
+        fotos: data.fotos?.map((foto: string) => getImageUrl(foto)) || [],
+      };
     },
     initialData: () => {
       const allPeopleCaches = queryClient.getQueriesData({

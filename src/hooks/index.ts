@@ -5,4 +5,5 @@ export * from "./useOccurrences";
 export * from "./useOccurrenceDetails";
 export * from "./useCreatePerson";
 export * from "./useCreateOccurrence";
+export * from "./useUpdatePerson";
 export * from "./utils";

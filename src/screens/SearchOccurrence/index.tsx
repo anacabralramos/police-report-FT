@@ -36,6 +36,7 @@ const SearchOccurrence = () => {
     text: debouncedText,
     date: filterDate,
   });
+
   const allOccurrences = occurrencePages?.pages.flat() || [];
 
   const handleChangeFilter = (filter: OccurrenceFilter | null) => {

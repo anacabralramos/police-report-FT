@@ -1,7 +1,14 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { getImageUrl } from "@hooks";
 import { supabase } from "../lib";
 
 const PAGE_SIZE = 20;
+
+const formatPerson = (data: any[]) =>
+  data?.map((p) => ({
+    ...p,
+    fotos: p.fotos?.map((foto: string) => getImageUrl(foto)) || [],
+  })) || [];
 
 export function usePeople(searchTerm: string) {
   // 1. Definição das regras de negócio (centralizado)
@@ -29,7 +36,7 @@ export function usePeople(searchTerm: string) {
           .range(from, to);
 
         if (error) throw error;
-        return data || [];
+        return formatPerson(data) || [];
       }
 
       // CASO B: BUSCA POR NOME
@@ -41,7 +48,7 @@ export function usePeople(searchTerm: string) {
         });
 
         if (error) throw error;
-        return data || [];
+        return formatPerson(data) || [];
       }
 
       // CASO C: NENHUM FILTRO (LISTA PADRÃO)
@@ -52,7 +59,8 @@ export function usePeople(searchTerm: string) {
         .range(from, to);
 
       if (error) throw error;
-      return data || [];
+
+      return formatPerson(data);
     },
     enabled: isInitialLoad || isSearchByCPF || isSearchByName,
     // Determina se há mais páginas para carregar. Se a última página trouxe menos de 20 pessoas significa que nao tem mais informaçoes pra puxar.

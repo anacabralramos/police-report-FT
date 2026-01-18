@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { Ionicons } from "@expo/vector-icons";
+import { usePeople } from "@hooks";
 import {
   Input,
   PersonCard,
@@ -14,8 +16,6 @@ import {
   Wrapper,
   RegisterForm,
 } from "@components";
-import { Ionicons } from "@expo/vector-icons";
-import { usePeople } from "@hooks";
 
 import { styles } from "./styles";
 

@@ -2,7 +2,6 @@ import React from "react";
 import { View, Image } from "react-native";
 
 import { Card, Typography } from "@components";
-import { getImageUrl } from "@hooks";
 import { useAppNavigation } from "@navigation";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -30,7 +29,7 @@ const PersonCard = ({ fotos, cpf, id, nome }: PersonCardProps) => {
       >
         {!!fotos.length ? (
           <Image
-            source={{ uri: getImageUrl(fotos[0]) }}
+            source={{ uri: fotos[0] }}
             style={styles.image}
             onLoadStart={() => console.log("Carregando foto...")}
             onError={(e) => console.log("Erro ao carregar foto...")}

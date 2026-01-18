@@ -7,6 +7,10 @@ export interface Person {
   fotos: string[];
 }
 
+export interface PersonData extends Person {
+  id: string;
+}
+
 export interface SelectedPerson {
   id: string;
   nome: string;
