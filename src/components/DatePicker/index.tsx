@@ -50,6 +50,7 @@ export default function DatePicker({
       childrenCustomStyles={{
         flexDirection: "row",
         alignItems: "center",
+        gap: 10,
       }}
     >
       <Ionicons name="calendar" size={20} color="#1d4ed8" />

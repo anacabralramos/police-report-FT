@@ -14,14 +14,14 @@ export default function LinkThoseInvolved() {
   const navigation = useAppNavigation();
 
   const setTempSelectedPeople = useOccurrenceStore(
-    (state) => state.setTempSelectedPeople
+    (state) => state.setTempSelectedPeople,
   );
 
   const [searchText, setSearchText] = useState("");
   const [selectedPeople, setSelectedPeople] = useState<SelectedPerson[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const { data: peopleList } = usePeople(searchText, true);
+  const { data: peopleList } = usePeople(searchText);
 
   const addPersonToSelection = (person: SelectedPerson) => {
     if (!selectedPeople.find((item) => item.id === person.id)) {
