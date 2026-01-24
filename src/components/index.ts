@@ -15,3 +15,5 @@ export { default as FilterByTitle } from "./FilterByTitle";
 export { default as PhotoUploader } from "./PhotoUploader";
 export { default as RegisterForm } from "./RegisterForm";
 export { default as UpdateForm } from "./UpdateForm";
+export { default as LocationModal } from "./LocationModal";
+export { default as AddressInput } from "./AddressInput";

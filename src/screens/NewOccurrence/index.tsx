@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
+import * as Location from "expo-location";
 
-import { CreateOccurrencePayload, useCreateOccurrence } from "@hooks";
-import { Wrapper, DatePicker, Input, Typography } from "@components";
 import { useAuthStore, useOccurrenceStore } from "@store";
 import { OccurrenceForm } from "@types";
+import {
+  Wrapper,
+  DatePicker,
+  Input,
+  Typography,
+  LocationModal,
+  AddressInput,
+} from "@components";
+import {
+  CreateOccurrencePayload,
+  useCreateOccurrence,
+  useLocation,
+} from "@hooks";
 
 import { InvolvedInLinking, Section, TitleDropdown } from "./components";
 import { initialFormState } from "./constants";
@@ -23,6 +35,32 @@ export default function NewOccurrence() {
 
   const [formOccurrence, setFormOccurrence] =
     useState<OccurrenceForm>(initialFormState);
+  const { getCurrentLocation, loading } = useLocation();
+  const [mapVisible, setMapVisible] = useState(false);
+  const [region, setRegion] = useState(null);
+
+  const handleOpenMap = async () => {
+    const coords = await getCurrentLocation();
+    if (coords) {
+      setRegion(coords);
+      setMapVisible(true);
+    }
+  };
+
+  const handleConfirmLocation = async (coords) => {
+    setMapVisible(false);
+
+    const [address] = await Location.reverseGeocodeAsync({
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+    });
+
+    if (address) {
+      const iosAddress = `${address.street}, ${address.city} - ${address.region}, ${address.postalCode}`;
+
+      setFormOccurrence({ ...formOccurrence, localizacao: iosAddress });
+    }
+  };
 
   const updateField = (field: keyof OccurrenceForm, value: any) => {
     setFormOccurrence((prev) => ({ ...prev, [field]: value }));
@@ -62,20 +100,23 @@ export default function NewOccurrence() {
   return (
     <Wrapper title="Novo cadastro" useScroll>
       <InvolvedInLinking involved={involved} onDelete={removePerson} />
-
       <Section title="Título">
         <TitleDropdown title={formOccurrence.titulo} updateForm={updateField} />
       </Section>
 
       <Section title="Local">
-        <Input
-          placeholder="Ex: Av. Principal, 123 - Centro"
-          placeholderTextColor="#666"
+        <AddressInput
           value={formOccurrence.localizacao}
           onChangeText={(text) => updateField("localizacao", text)}
-          iconName="location"
+          onMapPress={handleOpenMap}
         />
       </Section>
+      <LocationModal
+        visible={mapVisible}
+        initialRegion={region}
+        onClose={() => setMapVisible(false)}
+        onConfirm={handleConfirmLocation}
+      />
 
       <Section title="Descrição">
         <Input

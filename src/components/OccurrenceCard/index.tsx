@@ -17,6 +17,7 @@ const OccurrenceCard = ({ occurrence }: OccurrenceCardProps) => {
   const navigation = useAppNavigation();
 
   const namesArray = occurrence.envolvidos_nomes?.split(" | ") || [];
+  const street = occurrence.localizacao.split(",")[0] || "";
 
   return (
     <Card
@@ -30,7 +31,7 @@ const OccurrenceCard = ({ occurrence }: OccurrenceCardProps) => {
           {formatDateToLocale(String(occurrence.data_hora))}
         </Typography>
         <Typography variant="smallDefault" color="#8e8e93">
-          {occurrence.localizacao}
+          {street}
         </Typography>
       </View>
 

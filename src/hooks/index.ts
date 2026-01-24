@@ -6,4 +6,5 @@ export * from "./useOccurrenceDetails";
 export * from "./useCreatePerson";
 export * from "./useCreateOccurrence";
 export * from "./useUpdatePerson";
+export * from "./useLocation";
 export * from "./utils";
