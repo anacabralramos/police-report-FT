@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as Location from "expo-location";
 
 import { useAuthStore, useOccurrenceStore } from "@store";
@@ -38,6 +44,7 @@ export default function NewOccurrence() {
   const { getCurrentLocation, loading } = useLocation();
   const [mapVisible, setMapVisible] = useState(false);
   const [region, setRegion] = useState(null);
+  const [addressLoading, setAddressLoading] = useState(false);
 
   const handleOpenMap = async () => {
     const coords = await getCurrentLocation();
@@ -48,6 +55,7 @@ export default function NewOccurrence() {
   };
 
   const handleConfirmLocation = async (coords) => {
+    setAddressLoading(true);
     setMapVisible(false);
 
     const [address] = await Location.reverseGeocodeAsync({
@@ -56,10 +64,14 @@ export default function NewOccurrence() {
     });
 
     if (address) {
-      const iosAddress = `${address.street}, ${address.city} - ${address.region}, ${address.postalCode}`;
+      const formattedAddress =
+        Platform.OS === "ios"
+          ? `${address.street}, ${address.city} - ${address.region}, ${address.postalCode}`
+          : `${address.street}, ${address.district} - ${address.region}, ${address.postalCode}`;
 
-      setFormOccurrence({ ...formOccurrence, localizacao: iosAddress });
+      setFormOccurrence({ ...formOccurrence, localizacao: formattedAddress });
     }
+    setAddressLoading(false);
   };
 
   const updateField = (field: keyof OccurrenceForm, value: any) => {
@@ -109,6 +121,7 @@ export default function NewOccurrence() {
           value={formOccurrence.localizacao}
           onChangeText={(text) => updateField("localizacao", text)}
           onMapPress={handleOpenMap}
+          loading={addressLoading}
         />
       </Section>
       <LocationModal
