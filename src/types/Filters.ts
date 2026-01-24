@@ -1,1 +1,1 @@
-export type OccurrenceFilter = "TITLE" | "DATE" | "INVOLVED" | "LOCATION";
+export type OccurrenceFilter = "TITLE" | "DATE" | "INVOLVED";
